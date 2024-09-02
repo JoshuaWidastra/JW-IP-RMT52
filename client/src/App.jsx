@@ -38,7 +38,7 @@
 import React, { useState, useEffect } from 'react'
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom'
 import { auth } from './firebase'
-import { signInWithPopup, GoogleAuthProvider } from 'firebase/auth'
+import { signInWithPopup, GoogleAuthProvider } from 'firebase/auth';
 import './App.css'
 
 const Home = ({ user }) => {
@@ -77,9 +77,21 @@ function App() {
   const signIn = () => {
     const provider = new GoogleAuthProvider();
     signInWithPopup(auth, provider)
-      .catch(error => console.error('Error signing in with Google', error));
+      .then((result) => {
+        
+        const credential = GoogleAuthProvider.credentialFromResult(result);
+        const token = credential.accessToken;
+        
+        const user = result.user;
+        console.log('User signed in:', user);
+      })
+      .catch((error) => {
+        
+        console.error('Error signing in with Google', error);
+      });
   };
 
+  
   const signOut = () => {
     auth.signOut()
       .catch(error => console.error('Error signing out', error));
