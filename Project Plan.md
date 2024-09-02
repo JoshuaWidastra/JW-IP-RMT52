@@ -1,8 +1,8 @@
 # MoodMix: AI-Powered Mood-Based Music Curator - Full Stack Project Plan
 
 ## 1. Project Setup and Planning
-- [ ] Initialize Git repository (use forking, not cloning)
-- [ ] Set up GitHub Workflow (branch, commit, merge)
+- [X] Initialize Git repository (use forking, not cloning)
+- [X] Set up GitHub Workflow (branch, commit, merge)
 - [ ] Create React app using Vite
 - [ ] Set up Express.js backend
 - [ ] Configure Firebase for database
