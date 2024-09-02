@@ -3,13 +3,12 @@ import { getAuth } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore';
 
 const firebaseConfig = {
-  apiKey: "AIzaSyDqccKO-nrtLyaOUuAl7269Ov19tS53E_8",
-  authDomain: "moodmix-96fdd.firebaseapp.com",
-  projectId: "moodmix-96fdd",
-  storageBucket: "moodmix-96fdd.appspot.com",
-  messagingSenderId: "16271956681",
-  appId: "1:16271956681:web:57638cd724c5e994780b18",
-  measurementId: "G-99YN40JDNX"
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+  appId: import.meta.env.VITE_FIREBASE_APP_ID
 };
 
 const app = initializeApp(firebaseConfig);
