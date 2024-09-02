@@ -1,0 +1,32 @@
+MoodMix/
+├── client/
+│   ├── public/
+│   ├── src/
+│   │   ├── components/
+│   │   ├── pages/
+│   │   ├── services/
+│   │   ├── store/
+│   │   ├── styles/
+│   │   ├── utils/
+│   │   ├── App.jsx
+│   │   └── main.jsx
+│   ├── .eslintrc.cjs
+│   ├── .gitignore
+│   ├── index.html
+│   ├── package.json
+│   ├── README.md
+│   └── vite.config.js
+├── server/
+│   ├── config/
+│   ├── controllers/
+│   ├── data/
+│   ├── helpers/
+│   ├── middleware/
+│   ├── migrations/
+│   ├── models/
+│   ├── seeders/
+│   ├── .env
+│   ├── app.js
+│   ├── package.json
+│   └── README.md
+└── README.md

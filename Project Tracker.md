@@ -2,12 +2,12 @@
 
 ## Day 1: Setup and Basic Structure
 - [X] Initialize Git repository
-- [ ] Set up React app with Vite
-- [ ] Set up Express.js server
-- [ ] Implement basic routing in React
+- [X] Set up React app with Vite
+- [X] Set up Express.js server
+- [X] Implement basic routing in React
 - [ ] Create placeholder components for main features
-- [ ] Set up Redux store
-- [ ] Implement basic Express routes
+- [X] Set up Redux store
+- [x] Implement basic Express routes
 - [ ] Test connection between frontend and backend
 
 ## Day 2: API Integration and Core Features
