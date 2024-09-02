@@ -13,6 +13,10 @@ app.get('/', (req, res) => {
   res.json({ message: 'Welcome to MoodMix API' });
 });
 
+app.get('/api/test', (req, res) => {
+  res.json({ message: 'API is working correctly' });
+});
+
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });

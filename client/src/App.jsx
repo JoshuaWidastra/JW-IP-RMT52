@@ -35,11 +35,28 @@
 // export default App
 
 
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom'
 import './App.css'
 
-const Home = () => <h2>Home</h2>
+const Home = () => {
+  const [apiMessage, setApiMessage] = useState('');
+
+  useEffect(() => {
+    fetch('http://localhost:3000/api/test')
+      .then(response => response.json())
+      .then(data => setApiMessage(data.message))
+      .catch(error => console.error('Error:', error));
+  }, []);
+
+  return (
+    <div>
+      <h2>Home</h2>
+      <p>API Message: {apiMessage}</p>
+    </div>
+  );
+};
+
 const MoodInput = () => <h2>Mood Input</h2>
 const Playlist = () => <h2>Playlist</h2>
 const SongStory = () => <h2>Song Story</h2>
