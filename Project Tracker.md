@@ -5,10 +5,10 @@
 - [X] Set up React app with Vite
 - [X] Set up Express.js server
 - [X] Implement basic routing in React
-- [ ] Create placeholder components for main features
+- [X] Create placeholder components for main features
 - [X] Set up Redux store
 - [x] Implement basic Express routes
-- [ ] Test connection between frontend and backend
+- [X] Test connection between frontend and backend
 
 ## Day 2: API Integration and Core Features
 - [ ] Integrate Spotify API

@@ -3,10 +3,10 @@
 ## 1. Project Setup and Planning
 - [X] Initialize Git repository (use forking, not cloning)
 - [X] Set up GitHub Workflow (branch, commit, merge)
-- [ ] Create React app using Vite
-- [ ] Set up Express.js backend
-- [ ] Configure Firebase for database
-- [ ] Install necessary dependencies (including `cors`)
+- [X] Create React app using Vite
+- [X] Set up Express.js backend
+- [X] Configure Firebase for database
+- [X] Install necessary dependencies (including `cors`)
 
 ## 2. Backend Development
 - [ ] Set up Express server
