@@ -2,6 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const admin = require('./firebase');
 const spotifyService = require('./services/spotifyService');
+const openaiService = require('./services/openaiService');
 require('dotenv').config();
 
 const app = express();
@@ -75,6 +76,17 @@ try {
     res.status(500).json({ error: 'Failed to create playlist' });
 }
 });
+
+app.post('/api/analyze-text', authenticateUser, async (req, res) => {
+    try {
+      const { text } = req.body;
+      const analysis = await openaiService.analyzeText(text);
+      res.json({ analysis });
+    } catch (error) {
+      console.error('Error in text analysis:', error);
+      res.status(500).json({ error: 'Failed to analyze text' });
+    }
+  });
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
