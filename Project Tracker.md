@@ -19,12 +19,12 @@
   - [X] Implement authentication flow
   - [X] Create functions for searching tracks
   - [X] Implement playlist creation
-- [ ] Integrate OpenAI API
-  - [ ] Set up API key and test connection
-  - [ ] Create function for basic text analysis
-- [ ] Integrate Genius API
-  - [ ] Set up API key and test connection
-  - [ ] Create function to fetch song information
+- [X] Integrate OpenAI API
+  - [X] Set up API key and test connection
+  - [X] Create function for basic text analysis
+- [X] Integrate Genius API
+  - [X] Set up API key and test connection
+  - [X] Create function to fetch song information
 - [ ] Implement mood input UI
 - [ ] Create basic algorithm for mood-based track selection
 

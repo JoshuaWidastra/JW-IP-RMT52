@@ -1,0 +1,23 @@
+Name: Joshua Widastra
+
+Theme: MoodMix - AI-Powered Mood-Based Music Curator
+Overview: An app that creates personalized playlists based on the user's current mood, activities, and preferences, using AI to analyze lyrics, sound features, and user feedback.
+
+Main Feature:
+- Mood-based playlist generation
+- Activity-specific music recommendations
+- Lyric analysis for emotional content
+- User mood tracking and music impact feedback
+- AI-generated mood insights based on music choices
+
+3rd Party API:
+- Spotify API: For accessing music tracks, audio features, and creating playlists
+- OpenAI API: For analyzing lyrics, generating mood insights, and creating personalized recommendations
+- Auth0: For user authentication and profile management
+
+Table:
+- User
+- Playlist
+- Mood
+- Activity
+- Feedback

@@ -39,6 +39,7 @@ import React, { useState, useEffect } from 'react'
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom'
 import { auth } from './firebase'
 import { signInWithPopup, GoogleAuthProvider } from 'firebase/auth';
+import MoodInput from './components/MoodInput';
 import './App.css'
 
 const Home = ({ user }) => {
@@ -85,7 +86,7 @@ const Home = ({ user }) => {
   );
 };
 
-const MoodInput = () => <h2>Mood Input</h2>
+// const MoodInput = () => <h2>Mood Input</h2>
 const Playlist = () => <h2>Playlist</h2>
 const SongStory = () => <h2>Song Story</h2>
 
@@ -122,14 +123,21 @@ function App() {
       .catch(error => console.error('Error signing out', error));
   };
 
+  const handleMoodSubmit = (moodData) => {
+    console.log('Mood submitted:', moodData);
+  };
+
   return (
     <Router>
       <div className="App">
         <h1>Welcome to MoodMix</h1>
         {user ? (
-          <button onClick={signOut}>Sign Out</button>
+          <>
+            <p>Welcome, {user.displayName}!</p>
+            <MoodInput onMoodSubmit={handleMoodSubmit} />
+          </>
         ) : (
-          <button onClick={signIn}>Sign In with Google</button>
+          <p>Please sign in</p>
         )}
         <Routes>
           <Route path="/" element={<Home user={user} />} />

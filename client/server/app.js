@@ -48,6 +48,7 @@ app.get('/api/spotify/login', (req, res) => {
 app.get('/api/spotify/callback', async (req, res) => {
     try {
         const { code } = req.query;
+        console.log('Authorization Code:', code); // clg for auth code
         await spotifyService.handleCallback(code);
         res.redirect('http://localhost:5173/dashboard');
     } catch (error) {
