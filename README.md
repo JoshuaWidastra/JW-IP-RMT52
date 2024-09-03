@@ -29,3 +29,4 @@ MoodMix is a full-stack application that curates music playlists based on user m
 
 
 ## License
+

@@ -4,6 +4,7 @@ const admin = require('./firebase');
 const spotifyService = require('./services/spotifyService');
 const openaiService = require('./services/openaiService');
 const geniusService = require('./services/geniusService');
+const playlistService = require('./services/playlistService');
 require('dotenv').config();
 
 const app = express();
@@ -101,6 +102,18 @@ app.get('/api/test-genius', authenticateUser, async (req, res) => {
         res.status(500).json({ error: 'Failed to fetch song information' });
     }
 });
+
+app.post('/api/generate-playlist', authenticateUser, async (req, res) => {
+    try {
+        const { mood, genres } = req.body;
+        const playlist = await playlistService.generatePlaylistForMood(mood, genres);
+        res.json(playlist);
+    } catch (error) {
+        console.error('Error generating playlist:', error);
+        res.status(500).json({ error: 'Failed to generate playlist' });
+    }
+});
+
 
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
