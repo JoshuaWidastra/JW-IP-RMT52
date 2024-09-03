@@ -5,11 +5,15 @@ MoodMix/
 │   │   ├── components/
 │   │   ├── pages/
 │   │   ├── services/
+│   │   │   └── spotifyService.js
 │   │   ├── store/
 │   │   ├── styles/
 │   │   ├── utils/
 │   │   ├── App.jsx
-│   │   └── main.jsx
+│   │   ├── main.jsx
+│   │   └── firebase.js
+│   ├── .env
+│   ├── .env.example
 │   ├── .eslintrc.cjs
 │   ├── .gitignore
 │   ├── index.html
@@ -22,10 +26,15 @@ MoodMix/
 │   ├── data/
 │   ├── helpers/
 │   ├── middleware/
-│   ├── migrations/
+│   │   └── auth.js
 │   ├── models/
-│   ├── seeders/
+│   ├── routes/
+│   │   └── spotifyRoutes.js
+│   ├── services/
+│   │   └── spotifyService.js
 │   ├── .env
+│   ├── .env.example
+│   ├── .gitignore
 │   ├── app.js
 │   ├── package.json
 │   └── README.md

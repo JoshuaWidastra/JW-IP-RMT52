@@ -5,30 +5,34 @@
 - [X] Set up GitHub Workflow (branch, commit, merge)
 - [X] Create React app using Vite
 - [X] Set up Express.js backend
-- [X] Configure Firebase for database
+- [X] Configure Firebase for database and authentication
 - [X] Install necessary dependencies (including `cors`)
 
 ## 2. Backend Development
-- [ ] Set up Express server
-- [ ] Implement CORS middleware
+- [X] Set up Express server
+- [X] Implement CORS middleware
+- [X] Implement authentication middleware
 - [ ] Create REST API endpoints for:
-  - [ ] User authentication
+  - [X] User authentication
   - [ ] Mood input
   - [ ] Playlist generation
   - [ ] Feedback collection
 - [ ] Implement API documentation
-- [ ] Set up Firebase connection
-- [ ] Integrate Spotify API
+- [X] Set up Firebase connection
+- [X] Integrate Spotify API
   - [ ] Implement track search
   - [ ] Manage playlist creation
   - [ ] Retrieve audio features
+  - [X] Implement authentication flow
+  - [X] Create functions for searching tracks
+  - [X] Implement playlist creation
 - [ ] Integrate OpenAI API
   - [ ] Implement lyric analysis
   - [ ] Generate mood insights
 - [ ] Integrate Genius API
   - [ ] Fetch detailed song information and lyrics
   - [ ] Retrieve artist background information
-- [ ] Implement user authentication (without Auth0)
+- [X] Implement user authentication (with Google OAuth)
 - [ ] Set up testing environment (aim for 80% coverage)
 
 ## 3. Frontend Development
@@ -53,6 +57,11 @@
 - [ ] Develop user mood tracking and feedback system
 - [ ] Implement AI-generated mood insights
 - [ ] Create "Song Story" feature using Genius API data
+- [ ] Implement Mood Journal CRUD operations
+  - [ ] Create mood journal entry
+  - [ ] Read mood journal entries
+  - [ ] Update mood journal entry
+  - [ ] Delete mood journal entry
 
 ## 5. Testing and Refinement
 - [ ] Write and run tests (aim for 80% coverage)

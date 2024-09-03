@@ -44,12 +44,37 @@ import './App.css'
 const Home = ({ user }) => {
   const [apiMessage, setApiMessage] = useState('');
 
+  // useEffect(() => {
+  //   fetch('http://localhost:3000/api/test')
+  //     .then(response => response.json())
+  //     .then(data => setApiMessage(data.message))
+  //     .catch(error => console.error('Error:', error));
+  // }, []);
+
   useEffect(() => {
-    fetch('http://localhost:3000/api/test')
-      .then(response => response.json())
-      .then(data => setApiMessage(data.message))
-      .catch(error => console.error('Error:', error));
-  }, []);
+    const fetchData = async () => {
+      if (user) {
+        const token = await user.getIdToken();
+        try {
+          const response = await fetch('http://localhost:3000/api/test', {
+            headers: {
+              'Authorization': `Bearer ${token}`
+            }
+          });
+          if (response.ok) {
+            const data = await response.json();
+            setApiMessage(data.message);
+          } else {
+            console.error('API request failed');
+          }
+        } catch (error) {
+          console.error('Error:', error);
+        }
+      }
+    };
+
+    fetchData();
+  }, [user]);
 
   return (
     <div>

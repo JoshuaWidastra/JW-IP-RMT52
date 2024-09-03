@@ -1,6 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const admin = require('./firebase');
+const spotifyService = require('./services/spotifyService');
 require('dotenv').config();
 
 const app = express();
@@ -35,6 +36,44 @@ app.get('/', (req, res) => {
 
 app.get('/api/test', authenticateUser, (req, res) => {
   res.json({ message: 'API is working correctly', user: req.user });
+});
+
+
+app.get('/api/spotify/login', (req, res) => {
+    res.redirect(spotifyService.getAuthorizationUrl());
+  });
+  
+app.get('/api/spotify/callback', async (req, res) => {
+try {
+    const { code } = req.query;
+    await spotifyService.handleCallback(code);
+    res.redirect('http://localhost:5173/dashboard'); 
+} catch (error) {
+    console.error('Error in Spotify callback:', error);
+    res.status(500).json({ error: 'Authentication failed' });
+}
+});
+
+app.get('/api/spotify/search', async (req, res) => {
+try {
+    const { query } = req.query;
+    const tracks = await spotifyService.searchTracks(query);
+    res.json(tracks);
+} catch (error) {
+    console.error('Error searching tracks:', error);
+    res.status(500).json({ error: 'Failed to search tracks' });
+}
+});
+
+app.post('/api/spotify/create-playlist', async (req, res) => {
+try {
+    const { userId, name, description } = req.body;
+    const playlist = await spotifyService.createPlaylist(userId, name, description);
+    res.json(playlist);
+} catch (error) {
+    console.error('Error creating playlist:', error);
+    res.status(500).json({ error: 'Failed to create playlist' });
+}
 });
 
 app.listen(PORT, () => {

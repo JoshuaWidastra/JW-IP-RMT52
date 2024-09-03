@@ -11,10 +11,14 @@
 - [X] Test connection between frontend and backend
 
 ## Day 2: API Integration and Core Features
-- [ ] Integrate Spotify API
-  - [ ] Implement authentication flow
-  - [ ] Create functions for searching tracks
-  - [ ] Implement playlist creation
+
+- [X] Set up Firebase project
+- [X] Configure Firebase in the backend
+- [X] Implement Google OAuth with Firebase
+- [X] Integrate Spotify API
+  - [X] Implement authentication flow
+  - [X] Create functions for searching tracks
+  - [X] Implement playlist creation
 - [ ] Integrate OpenAI API
   - [ ] Set up API key and test connection
   - [ ] Create function for basic text analysis
@@ -32,6 +36,18 @@
 - [ ] Implement activity-specific recommendations
 - [ ] Create UI for displaying playlists and song information
 - [ ] Implement playlist playback (if using Spotify SDK)
+- [ ] Implement mood input UI
+- [ ] Create basic algorithm for mood-based track selection
+- [ ] Develop playlist generation feature
+- [ ] Implement activity-specific recommendations
+- [ ] Create "Song Story" feature using Genius API data
+- [ ] Develop user mood tracking system
+- [ ] Implement AI-generated mood insights
+- [ ] Implement Mood Journal CRUD operations
+  - [ ] Create mood journal entry
+  - [ ] Read mood journal entries
+  - [ ] Update mood journal entry
+  - [ ] Delete mood journal entry
 
 ## Day 4: Refinement, Testing, and Deployment
 - [ ] Refine UI/UX
