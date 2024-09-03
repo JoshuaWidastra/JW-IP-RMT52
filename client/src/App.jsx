@@ -35,12 +35,13 @@
 // export default App
 
 
-import React, { useState, useEffect } from 'react'
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom'
-import { auth } from './firebase'
+import React, { useState, useEffect } from 'react';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { auth } from './firebase';
 import { signInWithPopup, GoogleAuthProvider } from 'firebase/auth';
 import MoodInput from './components/MoodInput';
-import './App.css'
+import './App.css';
+
 
 const Home = ({ user }) => {
   const [apiMessage, setApiMessage] = useState('');
@@ -92,6 +93,8 @@ const SongStory = () => <h2>Song Story</h2>
 
 function App() {
   const [user, setUser] = useState(null);
+  const [playlist, setPlaylist] = useState(null);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged(user => {
@@ -123,8 +126,29 @@ function App() {
       .catch(error => console.error('Error signing out', error));
   };
 
-  const handleMoodSubmit = (moodData) => {
-    console.log('Mood submitted:', moodData);
+  const handleMoodSubmit = async (moodData) => {
+    try {
+      const token = await user.getIdToken();
+      const response = await fetch('http://localhost:3000/api/generate-playlist', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(moodData)
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to generate playlist');
+      }
+
+      const data = await response.json();
+      setPlaylist(data);
+      setError(null);
+    } catch (err) {
+      console.error('Error generating playlist:', err);
+      setError('Failed to generate playlist. Please try again.');
+    }
   };
 
   return (
@@ -135,6 +159,16 @@ function App() {
           <>
             <p>Welcome, {user.displayName}!</p>
             <MoodInput onMoodSubmit={handleMoodSubmit} />
+            {error && <p style={{color: 'red'}}>{error}</p>}
+            {playlist && (
+              <div>
+                <h2>Your Playlist: {playlist.name}</h2>
+                <p>{playlist.description}</p>
+                <a href={playlist.external_urls.spotify} target="_blank" rel="noopener noreferrer">
+                  Open in Spotify
+                </a>
+              </div>
+            )}
           </>
         ) : (
           <p>Please sign in</p>
