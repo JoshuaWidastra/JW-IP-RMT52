@@ -26,17 +26,18 @@ router.get('/callback', async (req, res) => {
 
     setTimeout(() => usedAuthCodes.delete(code), 60000); // remove after 1 minute
 
-    res.json(data);
+    // instead of sending JSON, redirect to the frontend with the access token -- need testing
+    res.redirect(`${process.env.FRONTEND_URL}/spotify-callback?access_token=${data.access_token}`);
   } catch (error) {
     console.error('Error in Spotify callback:', error);
-    res.status(500).json({ error: 'Authentication failed', details: error.message });
+    res.redirect(`${process.env.FRONTEND_URL}/login?error=spotify_auth_failed`);
   }
 });
 
-router.get('/search', async (req, res) => {
+router.get('/search', authenticateUser, async (req, res) => {
   try {
     const { query } = req.query;
-    const tracks = await spotifyService.searchTracks(query);
+    const tracks = await spotifyService.searchTracks(query, req.user.spotifyToken);
     res.json(tracks);
   } catch (error) {
     console.error('Error searching tracks:', error);
@@ -47,7 +48,7 @@ router.get('/search', async (req, res) => {
 router.post('/create-playlist', authenticateUser, async (req, res) => {
   try {
     const { name, description } = req.body;
-    const playlist = await spotifyService.createPlaylist(req.user.id, name, description);
+    const playlist = await spotifyService.createPlaylist(req.user.spotifyToken, name, description);
     res.json(playlist);
   } catch (error) {
     console.error('Error creating playlist:', error);
