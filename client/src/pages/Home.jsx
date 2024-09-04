@@ -1,4 +1,6 @@
-import React, { useState, useEffect } from 'react';
+// client/src/pages/Home.jsx
+
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import MusicPlayer from '../components/MusicPlayer';
 import { getAuthUrl, getAccessToken, getRecommendations } from '../services/spotify';
@@ -10,33 +12,34 @@ function Home() {
   const [error, setError] = useState(null);
   const navigate = useNavigate();
   const location = useLocation();
+  const authCodeProcessed = useRef(false);
 
-  useEffect(() => {
-    const urlParams = new URLSearchParams(location.search);
-    const code = urlParams.get('code');
-    if (code) {
-      handleSpotifyCallback(code);
-      // Clear the code from the URL to prevent reuse
-      navigate('/', { replace: true });
-    }
-  }, [location, navigate]);
-
-  const handleSpotifyCallback = async (code) => {
+  const handleSpotifyCallback = useCallback(async (code) => {
+    console.log('Handling Spotify callback with code:', code);
     setIsLoading(true);
     setError(null);
     try {
+      console.log('Attempting to get access token');
       await getAccessToken(code);
+      console.log('Access token obtained successfully');
+      console.log('Fetching recommendations');
       const tracks = await getRecommendations();
-      setPlaylist(tracks.map(track => ({
-        id: track.id,
-        title: track.name,
-        artist: track.artists[0].name,
-        url: track.preview_url
-      })));
+      console.log('Recommendations fetched:', tracks);
+      if (tracks.length > 0) {
+        setPlaylist(tracks.map(track => ({
+          id: track.id,
+          title: track.name,
+          artist: track.artists[0].name,
+          url: track.preview_url
+        })));
+        setError(null); // Clear any previous errors if we successfully got tracks
+      } else {
+        setError('No tracks found. Please try again.');
+      }
     } catch (error) {
-      console.error('Error fetching Spotify data:', error);
+      console.error('Error in handleSpotifyCallback:', error);
       if (error.response && error.response.data.error === 'invalid_grant') {
-        setError('Spotify authorization expired. Please login again.');
+        console.log('Invalid grant error caught, but ignoring as we might have already processed the code');
       } else {
         setError(`Failed to fetch playlist: ${error.message}`);
       }
@@ -46,9 +49,28 @@ function Home() {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    console.log('Home component mounted or updated');
+    const urlParams = new URLSearchParams(location.search);
+    const code = urlParams.get('code');
+    if (code && !authCodeProcessed.current) {
+      console.log('Authorization code found and not yet processed:', code);
+      authCodeProcessed.current = true;
+      handleSpotifyCallback(code);
+      // Clear the code from the URL to prevent reuse
+      console.log('Clearing code from URL');
+      navigate('/', { replace: true });
+    } else if (code) {
+      console.log('Authorization code found but already processed');
+    } else {
+      console.log('No authorization code found in URL');
+    }
+  }, [location, navigate, handleSpotifyCallback]);
 
   const handleLogin = () => {
+    console.log('Initiating Spotify login');
     window.location.href = getAuthUrl();
   };
 

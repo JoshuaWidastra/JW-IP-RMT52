@@ -1,3 +1,5 @@
+// client/src/services/spotify.js
+
 import axios from 'axios';
 
 const SPOTIFY_BASE_URL = 'https://api.spotify.com/v1';
@@ -13,11 +15,13 @@ let refreshToken = null;
 let expirationTime = null;
 
 export const getAuthUrl = () => {
+  console.log('Generating Spotify auth URL');
   const scopes = ['user-read-private', 'user-read-email', 'playlist-read-private'];
   return `${AUTH_ENDPOINT}?client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&scope=${encodeURIComponent(scopes.join(' '))}&response_type=code`;
 };
 
 export const getAccessToken = async (code) => {
+  console.log('Attempting to get access token with code:', code);
   try {
     const response = await axios.post(TOKEN_ENDPOINT, 
       `grant_type=authorization_code&code=${code}&redirect_uri=${encodeURIComponent(redirectUri)}`,
@@ -28,9 +32,11 @@ export const getAccessToken = async (code) => {
         }
       }
     );
+    console.log('Token response received:', response.data);
     accessToken = response.data.access_token;
     refreshToken = response.data.refresh_token;
     expirationTime = Date.now() + response.data.expires_in * 1000;
+    console.log('Access token set, expires at:', new Date(expirationTime).toLocaleString());
     return accessToken;
   } catch (error) {
     console.error('Error in getAccessToken:', error.response ? error.response.data : error.message);
@@ -39,6 +45,7 @@ export const getAccessToken = async (code) => {
 };
 
 const refreshAccessToken = async () => {
+  console.log('Attempting to refresh access token');
   try {
     const response = await axios.post(TOKEN_ENDPOINT,
       `grant_type=refresh_token&refresh_token=${refreshToken}`,
@@ -49,8 +56,10 @@ const refreshAccessToken = async () => {
         }
       }
     );
+    console.log('Refresh token response received:', response.data);
     accessToken = response.data.access_token;
     expirationTime = Date.now() + response.data.expires_in * 1000;
+    console.log('Access token refreshed, new expiration:', new Date(expirationTime).toLocaleString());
     return accessToken;
   } catch (error) {
     console.error('Error refreshing token:', error);
@@ -59,19 +68,26 @@ const refreshAccessToken = async () => {
 };
 
 const getValidToken = async () => {
+  console.log('Checking token validity');
   if (!accessToken || Date.now() > expirationTime) {
+    console.log('Token invalid or expired');
     if (refreshToken) {
+      console.log('Attempting to refresh token');
       return refreshAccessToken();
     } else {
+      console.log('No refresh token available');
       throw new Error('No valid token available. Please login again.');
     }
   }
+  console.log('Token is valid');
   return accessToken;
 };
 
 export const getRecommendations = async (seed_genres = 'pop') => {
+  console.log('Fetching recommendations for genre:', seed_genres);
   try {
     const token = await getValidToken();
+    console.log('Valid token obtained');
     const response = await axios.get(`${SPOTIFY_BASE_URL}/recommendations`, {
       params: {
         seed_genres,
@@ -81,6 +97,7 @@ export const getRecommendations = async (seed_genres = 'pop') => {
         Authorization: `Bearer ${token}`,
       },
     });
+    console.log('Recommendations received:', response.data);
     return response.data.tracks;
   } catch (error) {
     console.error('Error getting recommendations:', error);
