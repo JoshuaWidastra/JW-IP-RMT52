@@ -3,6 +3,7 @@ import { LOGIN_SUCCESS, LOGIN_FAILURE, REGISTER_SUCCESS, REGISTER_FAILURE, LOGOU
 const initialState = {
   isAuthenticated: false,
   user: null,
+  token: null,
   error: null
 };
 
@@ -13,7 +14,8 @@ export default function authReducer(state = initialState, action) {
       return {
         ...state,
         isAuthenticated: true,
-        user: action.payload,
+        user: action.payload.user,
+        token: action.payload.token,
         error: null
       };
     case LOGIN_FAILURE:
@@ -22,6 +24,7 @@ export default function authReducer(state = initialState, action) {
         ...state,
         isAuthenticated: false,
         user: null,
+        token: null,
         error: action.payload
       };
     case LOGOUT:
@@ -29,6 +32,7 @@ export default function authReducer(state = initialState, action) {
         ...state,
         isAuthenticated: false,
         user: null,
+        token: null,
         error: null
       };
     default:

@@ -12,7 +12,14 @@ const serializeUser = (user) => ({
 export const loginUser = (email, password) => async (dispatch) => {
   try {
     const userCredential = await auth.signInWithEmailAndPassword(email, password);
-    dispatch({ type: LOGIN_SUCCESS, payload: serializeUser(userCredential.user) });
+    const token = await userCredential.user.getIdToken();
+    dispatch({ 
+      type: LOGIN_SUCCESS, 
+      payload: { 
+        user: serializeUser(userCredential.user),
+        token
+      } 
+    });
   } catch (error) {
     dispatch({ type: LOGIN_FAILURE, payload: error.message });
   }
@@ -22,7 +29,14 @@ export const loginWithGoogle = () => async (dispatch) => {
   try {
     const provider = new GoogleAuthProvider();
     const result = await signInWithPopup(auth, provider);
-    dispatch({ type: LOGIN_SUCCESS, payload: serializeUser(result.user) });
+    const token = await result.user.getIdToken();
+    dispatch({ 
+      type: LOGIN_SUCCESS, 
+      payload: { 
+        user: serializeUser(result.user),
+        token
+      } 
+    });
   } catch (error) {
     dispatch({ type: LOGIN_FAILURE, payload: error.message });
   }
@@ -31,7 +45,14 @@ export const loginWithGoogle = () => async (dispatch) => {
 export const registerUser = (email, password) => async (dispatch) => {
   try {
     const userCredential = await auth.createUserWithEmailAndPassword(email, password);
-    dispatch({ type: REGISTER_SUCCESS, payload: serializeUser(userCredential.user) });
+    const token = await userCredential.user.getIdToken();
+    dispatch({ 
+      type: REGISTER_SUCCESS, 
+      payload: { 
+        user: serializeUser(userCredential.user),
+        token
+      } 
+    });
   } catch (error) {
     dispatch({ type: REGISTER_FAILURE, payload: error.message });
   }

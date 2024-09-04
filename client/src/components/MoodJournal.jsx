@@ -5,24 +5,31 @@ function MoodJournal() {
   const [entries, setEntries] = useState([]);
   const [newEntry, setNewEntry] = useState('');
   const [mood, setMood] = useState('neutral');
+  const [error, setError] = useState(null);
   const user = useSelector(state => state.auth.user);
+  const token = useSelector(state => state.auth.token);
 
   useEffect(() => {
-    // Fetch mood journal entries from the backend
-    fetchEntries();
-  }, []);
+    if (user && token) {
+      fetchEntries();
+    }
+  }, [user, token]);
 
   const fetchEntries = async () => {
     try {
       const response = await fetch('http://localhost:3000/api/mood-journal', {
         headers: {
-          'Authorization': `Bearer ${user.token}`,
+          'Authorization': `Bearer ${token}`,
         },
       });
+      if (!response.ok) {
+        throw new Error('Failed to fetch entries');
+      }
       const data = await response.json();
       setEntries(data);
     } catch (error) {
       console.error('Error fetching mood journal entries:', error);
+      setError(error.message);
     }
   };
 
@@ -31,19 +38,27 @@ function MoodJournal() {
       const response = await fetch('http://localhost:3000/api/mood-journal', {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${user.token}`,
+          'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ content: newEntry, mood }),
       });
+      if (!response.ok) {
+        throw new Error('Failed to add entry');
+      }
       const data = await response.json();
       setEntries([...entries, data]);
       setNewEntry('');
       setMood('neutral');
     } catch (error) {
       console.error('Error adding mood journal entry:', error);
+      setError(error.message);
     }
   };
+
+  if (error) {
+    return <div>Error: {error}</div>;
+  }
 
   return (
     <div>
@@ -63,13 +78,17 @@ function MoodJournal() {
         <button onClick={addEntry}>Add Entry</button>
       </div>
       <div>
-        {entries.map((entry, index) => (
-          <div key={index}>
-            <p>{entry.content}</p>
-            <p>Mood: {entry.mood}</p>
-            <p>Date: {new Date(entry.createdAt).toLocaleString()}</p>
-          </div>
-        ))}
+        {entries && entries.length > 0 ? (
+          entries.map((entry, index) => (
+            <div key={index}>
+              <p>{entry.content}</p>
+              <p>Mood: {entry.mood}</p>
+              <p>Date: {new Date(entry.createdAt).toLocaleString()}</p>
+            </div>
+          ))
+        ) : (
+          <p>No entries yet.</p>
+        )}
       </div>
     </div>
   );
