@@ -1,92 +1,48 @@
-import React, { useState, useEffect } from 'react';
-import { useSelector } from 'react-redux';
+import React, { useState } from 'react';
+import ReactPlayer from 'react-player';
 
-function MusicPlayer() {
-  const [player, setPlayer] = useState(null);
-  const [is_paused, setPaused] = useState(false);
-  const [is_active, setActive] = useState(false);
-  const [current_track, setTrack] = useState(null);
-  const spotifyToken = useSelector(state => state.spotify.token);
+function MusicPlayer({ playlist }) {
+  const [currentTrackIndex, setCurrentTrackIndex] = useState(0);
+  const [isPlaying, setIsPlaying] = useState(false);
 
-  useEffect(() => {
-    const script = document.createElement("script");
-    script.src = "https://sdk.scdn.co/spotify-player.js";
-    script.async = true;
+  const currentTrack = playlist[currentTrackIndex];
 
-    document.body.appendChild(script);
+  const handlePlayPause = () => {
+    setIsPlaying(!isPlaying);
+  };
 
-    window.onSpotifyWebPlaybackSDKReady = () => {
-      const player = new window.Spotify.Player({
-        name: 'MoodMix Web Player',
-        getOAuthToken: cb => { cb(spotifyToken); },
-        volume: 0.5
-      });
+  const handlePrevTrack = () => {
+    setCurrentTrackIndex((prevIndex) => (prevIndex > 0 ? prevIndex - 1 : playlist.length - 1));
+  };
 
-      setPlayer(player);
+  const handleNextTrack = () => {
+    setCurrentTrackIndex((prevIndex) => (prevIndex < playlist.length - 1 ? prevIndex + 1 : 0));
+  };
 
-      player.addListener('ready', ({ device_id }) => {
-        console.log('Ready with Device ID', device_id);
-      });
-
-      player.addListener('not_ready', ({ device_id }) => {
-        console.log('Device ID has gone offline', device_id);
-      });
-
-      player.addListener('player_state_changed', (state => {
-        if (!state) {
-          return;
-        }
-
-        setTrack(state.track_window.current_track);
-        setPaused(state.paused);
-
-        player.getCurrentState().then(state => {
-          (!state) ? setActive(false) : setActive(true)
-        });
-      }));
-
-      player.connect();
-    };
-  }, [spotifyToken]);
-
-  if (!is_active) {
-    return (
-      <>
-        <div className="container">
-          <div className="main-wrapper">
-            <b> Instance not active. Transfer your playback using your Spotify app </b>
+  return (
+    <div className="music-player">
+      <h2>Now Playing</h2>
+      {currentTrack && (
+        <>
+          <ReactPlayer
+            url={currentTrack.url}
+            playing={isPlaying}
+            controls={true}
+            width="100%"
+            height="50px"
+          />
+          <div className="track-info">
+            <p>{currentTrack.title} - {currentTrack.artist}</p>
           </div>
-        </div>
-      </>
-    )
-  } else {
-    return (
-      <>
-        <div className="container">
-          <div className="main-wrapper">
-            <img src={current_track.album.images[0].url} className="now-playing__cover" alt="" />
-
-            <div className="now-playing__side">
-              <div className="now-playing__name">{current_track.name}</div>
-              <div className="now-playing__artist">{current_track.artists[0].name}</div>
-
-              <button className="btn-spotify" onClick={() => { player.previousTrack() }} >
-                &lt;&lt;
-              </button>
-
-              <button className="btn-spotify" onClick={() => { player.togglePlay() }} >
-                {is_paused ? "PLAY" : "PAUSE"}
-              </button>
-
-              <button className="btn-spotify" onClick={() => { player.nextTrack() }} >
-                &gt;&gt;
-              </button>
-            </div>
-          </div>
-        </div>
-      </>
-    );
-  }
+        </>
+      )}
+      <div className="controls">
+        <button onClick={handlePrevTrack}>Previous</button>
+        <button onClick={handlePlayPause}>{isPlaying ? 'Pause' : 'Play'}</button>
+        <button onClick={handleNextTrack}>Next</button>
+      </div>
+    </div>
+  );
 }
 
 export default MusicPlayer;

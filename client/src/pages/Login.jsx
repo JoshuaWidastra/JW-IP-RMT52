@@ -1,44 +1,25 @@
-import React, { useState } from 'react';
-import { useDispatch } from 'react-redux';
+import React from 'react';
+import { signInWithPopup, GoogleAuthProvider } from 'firebase/auth';
+import { auth } from '../firebase';
 import { useNavigate } from 'react-router-dom';
-import { loginUser, loginWithGoogle } from '../store/actions/authActions';
 
 function Login() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    dispatch(loginUser(email, password));
-    navigate('/dashboard');
-  };
-
-  const handleGoogleLogin = () => {
-    dispatch(loginWithGoogle());
-    // navigation will be handled in the action creator after successful login
+  const handleGoogleLogin = async () => {
+    const provider = new GoogleAuthProvider();
+    try {
+      await signInWithPopup(auth, provider);
+      navigate('/profile');
+    } catch (error) {
+      console.error('Error signing in with Google', error);
+    }
   };
 
   return (
     <div>
-      <h2>Login</h2>
-      <form onSubmit={handleSubmit}>
-        <input
-          type="email"
-          placeholder="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-        />
-        <input
-          type="password"
-          placeholder="Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
-        <button type="submit">Login</button>
-      </form>
-      <button onClick={handleGoogleLogin}>Login with Google</button>
+      <h1>Login</h1>
+      <button onClick={handleGoogleLogin}>Sign in with Google</button>
     </div>
   );
 }

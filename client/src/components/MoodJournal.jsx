@@ -1,58 +1,75 @@
 import React, { useState, useEffect } from 'react';
-import { useSelector } from 'react-redux';
+import { auth } from '../firebase';
 
 function MoodJournal() {
   const [entries, setEntries] = useState([]);
-  const [newEntry, setNewEntry] = useState('');
-  const [mood, setMood] = useState('neutral');
+  const [newEntry, setNewEntry] = useState({ mood: '', reflection: '' });
   const [error, setError] = useState(null);
-  const user = useSelector(state => state.auth.user);
-  const token = useSelector(state => state.auth.token);
 
   useEffect(() => {
-    if (user && token) {
-      fetchEntries();
-    }
-  }, [user, token]);
-
-  const fetchEntries = async () => {
-    try {
-      const response = await fetch('http://localhost:3000/api/mood-journal', {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-        },
-      });
-      if (!response.ok) {
-        throw new Error('Failed to fetch entries');
+    const unsubscribe = auth.onAuthStateChanged((user) => {
+      if (user) {
+        fetchEntries();
+      } else {
+        setEntries([]);
       }
-      const data = await response.json();
-      setEntries(data);
-    } catch (error) {
-      console.error('Error fetching mood journal entries:', error);
-      setError(error.message);
+    });
+
+    return () => unsubscribe();
+  }, []);
+
+  const fetchEntries = () => {
+    const storedEntries = localStorage.getItem('moodEntries');
+    if (storedEntries) {
+      setEntries(JSON.parse(storedEntries));
     }
   };
 
-  const addEntry = async () => {
+  const saveEntries = (updatedEntries) => {
+    localStorage.setItem('moodEntries', JSON.stringify(updatedEntries));
+    setEntries(updatedEntries);
+  };
+
+  const addEntry = (e) => {
+    e.preventDefault();
     try {
-      const response = await fetch('http://localhost:3000/api/mood-journal', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ content: newEntry, mood }),
-      });
-      if (!response.ok) {
-        throw new Error('Failed to add entry');
-      }
-      const data = await response.json();
-      setEntries([...entries, data]);
-      setNewEntry('');
-      setMood('neutral');
-    } catch (error) {
-      console.error('Error adding mood journal entry:', error);
-      setError(error.message);
+      const user = auth.currentUser;
+      if (!user) throw new Error('User not authenticated');
+
+      const newEntryWithId = {
+        id: Date.now().toString(),
+        ...newEntry,
+        userId: user.uid,
+        createdAt: new Date().toISOString()
+      };
+      const updatedEntries = [...entries, newEntryWithId];
+      saveEntries(updatedEntries);
+      setNewEntry({ mood: '', reflection: '' });
+    } catch (err) {
+      console.error('Error adding entry:', err);
+      setError('Failed to add entry. Please try again later.');
+    }
+  };
+
+  const updateEntry = (id, updatedEntry) => {
+    try {
+      const updatedEntries = entries.map(entry => 
+        entry.id === id ? { ...entry, ...updatedEntry } : entry
+      );
+      saveEntries(updatedEntries);
+    } catch (err) {
+      console.error('Error updating entry:', err);
+      setError('Failed to update entry. Please try again later.');
+    }
+  };
+
+  const deleteEntry = (id) => {
+    try {
+      const updatedEntries = entries.filter(entry => entry.id !== id);
+      saveEntries(updatedEntries);
+    } catch (err) {
+      console.error('Error deleting entry:', err);
+      setError('Failed to delete entry. Please try again later.');
     }
   };
 
@@ -63,33 +80,29 @@ function MoodJournal() {
   return (
     <div>
       <h2>Mood Journal</h2>
-      <div>
-        <textarea
-          value={newEntry}
-          onChange={(e) => setNewEntry(e.target.value)}
-          placeholder="How are you feeling today?"
+      <form onSubmit={addEntry}>
+        <input
+          type="text"
+          placeholder="Mood"
+          value={newEntry.mood}
+          onChange={(e) => setNewEntry({ ...newEntry, mood: e.target.value })}
         />
-        <select value={mood} onChange={(e) => setMood(e.target.value)}>
-          <option value="happy">Happy</option>
-          <option value="sad">Sad</option>
-          <option value="angry">Angry</option>
-          <option value="neutral">Neutral</option>
-        </select>
-        <button onClick={addEntry}>Add Entry</button>
-      </div>
-      <div>
-        {entries && entries.length > 0 ? (
-          entries.map((entry, index) => (
-            <div key={index}>
-              <p>{entry.content}</p>
-              <p>Mood: {entry.mood}</p>
-              <p>Date: {new Date(entry.createdAt).toLocaleString()}</p>
-            </div>
-          ))
-        ) : (
-          <p>No entries yet.</p>
-        )}
-      </div>
+        <textarea
+          placeholder="Reflection"
+          value={newEntry.reflection}
+          onChange={(e) => setNewEntry({ ...newEntry, reflection: e.target.value })}
+        />
+        <button type="submit">Add Entry</button>
+      </form>
+      <ul>
+        {entries.map(entry => (
+          <li key={entry.id}>
+            <strong>{entry.mood}</strong>: {entry.reflection}
+            <button onClick={() => updateEntry(entry.id, { ...entry, mood: 'Updated Mood' })}>Update</button>
+            <button onClick={() => deleteEntry(entry.id)}>Delete</button>
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }
