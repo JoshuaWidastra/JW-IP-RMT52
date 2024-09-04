@@ -29,6 +29,10 @@
 - [ ] Create basic algorithm for mood-based track selection
 
 ## Day 3: Feature Development
+- [ ] Implement the music player functionality (play, pause, skip, rewind)
+- [ ] Test and refine the music player interface
+- [ ] Integrate OpenAI and Genius API for enhanced music experience
+- [ ] Implement initial CRUD operations for Mood Journal
 - [ ] Enhance mood-based playlist generation
 - [ ] Implement lyric analysis with OpenAI
 - [ ] Create "Song Story" feature using Genius API data
@@ -50,6 +54,9 @@
   - [ ] Delete mood journal entry
 
 ## Day 4: Refinement, Testing, and Deployment
+- [ ] Finalize CRUD operations for Mood Journal and integrate them into the UI
+- [ ] Test and refine the music player and CRUD operations
+- [ ] Ensure full integration with OpenAI and Genius API
 - [ ] Refine UI/UX
 - [ ] Implement error handling
 - [ ] Write tests for critical functions

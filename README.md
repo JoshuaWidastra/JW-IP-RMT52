@@ -15,7 +15,7 @@ MoodMix is a full-stack application that curates music playlists based on user m
 ## Tech Stack
 - Frontend: React (Vite)
 - Backend: Express.js
-- Database: PostgreSQL (with Supabase)
+- Database: Firebase
 - APIs: Spotify, OpenAI, Genius
 - Authentication: Google OAuth
 

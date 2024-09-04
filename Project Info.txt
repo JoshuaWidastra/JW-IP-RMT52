@@ -24,11 +24,10 @@ Table:
 - Feedback
 
 Addition:
-- use list
 - gpt 4o - mini
 - data from spotify 
 - simplify : "play & pause" music - make sure its working, next & pref "??", controls 
-
+- separate router in app.js please
 
 - plug in ?? 
 
