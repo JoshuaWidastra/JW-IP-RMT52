@@ -1,6 +1,8 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
+import { auth } from './firebase';
+import { LOGIN_SUCCESS, LOGOUT } from './store/actionTypes';
 import Navbar from './components/Navbar';
 import Home from './pages/Home';
 import Login from './pages/Login';
@@ -13,6 +15,27 @@ import PrivateRoute from './components/PrivateRoute';
 
 function App() {
   const isAuthenticated = useSelector(state => state.auth.isAuthenticated);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged(user => {
+      if (user) {
+        dispatch({
+          type: LOGIN_SUCCESS,
+          payload: {
+            uid: user.uid,
+            email: user.email,
+            displayName: user.displayName,
+            photoURL: user.photoURL,
+          },
+        });
+      } else {
+        dispatch({ type: LOGOUT });
+      }
+    });
+
+    return () => unsubscribe();
+  }, [dispatch]);
 
   return (
     <Router>
