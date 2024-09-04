@@ -1,50 +1,78 @@
-const express = require('express');
-const router = express.Router();
-const moodJournalService = require('../services/moodJournalService');
-const { authenticateUser } = require('../middleware/auth');
+import React, { useState, useEffect } from 'react';
+import { useSelector } from 'react-redux';
 
-router.get('/', authenticateUser, async (req, res) => {
-  try {
-    const entries = await moodJournalService.getEntries(req.user.id);
-    res.json(entries);
-  } catch (error) {
-    console.error('Error fetching mood journal entries:', error);
-    res.status(500).json({ error: 'Failed to fetch mood journal entries' });
-  }
-});
+function MoodJournal() {
+  const [entries, setEntries] = useState([]);
+  const [newEntry, setNewEntry] = useState('');
+  const [mood, setMood] = useState('neutral');
+  const user = useSelector(state => state.auth.user);
 
-router.post('/', authenticateUser, async (req, res) => {
-  try {
-    const { content } = req.body;
-    const entry = await moodJournalService.createEntry(req.user.id, content);
-    res.json(entry);
-  } catch (error) {
-    console.error('Error creating mood journal entry:', error);
-    res.status(500).json({ error: 'Failed to create mood journal entry' });
-  }
-});
+  useEffect(() => {
+    // Fetch mood journal entries from the backend
+    fetchEntries();
+  }, []);
 
-router.put('/:id', authenticateUser, async (req, res) => {
-  try {
-    const { id } = req.params;
-    const { content } = req.body;
-    const updatedEntry = await moodJournalService.updateEntry(req.user.id, id, content);
-    res.json(updatedEntry);
-  } catch (error) {
-    console.error('Error updating mood journal entry:', error);
-    res.status(500).json({ error: 'Failed to update mood journal entry' });
-  }
-});
+  const fetchEntries = async () => {
+    try {
+      const response = await fetch('http://localhost:3000/api/mood-journal', {
+        headers: {
+          'Authorization': `Bearer ${user.token}`,
+        },
+      });
+      const data = await response.json();
+      setEntries(data);
+    } catch (error) {
+      console.error('Error fetching mood journal entries:', error);
+    }
+  };
 
-router.delete('/:id', authenticateUser, async (req, res) => {
-  try {
-    const { id } = req.params;
-    await moodJournalService.deleteEntry(req.user.id, id);
-    res.json({ message: 'Entry deleted successfully' });
-  } catch (error) {
-    console.error('Error deleting mood journal entry:', error);
-    res.status(500).json({ error: 'Failed to delete mood journal entry' });
-  }
-});
+  const addEntry = async () => {
+    try {
+      const response = await fetch('http://localhost:3000/api/mood-journal', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${user.token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ content: newEntry, mood }),
+      });
+      const data = await response.json();
+      setEntries([...entries, data]);
+      setNewEntry('');
+      setMood('neutral');
+    } catch (error) {
+      console.error('Error adding mood journal entry:', error);
+    }
+  };
 
-module.exports = router;
+  return (
+    <div>
+      <h2>Mood Journal</h2>
+      <div>
+        <textarea
+          value={newEntry}
+          onChange={(e) => setNewEntry(e.target.value)}
+          placeholder="How are you feeling today?"
+        />
+        <select value={mood} onChange={(e) => setMood(e.target.value)}>
+          <option value="happy">Happy</option>
+          <option value="sad">Sad</option>
+          <option value="angry">Angry</option>
+          <option value="neutral">Neutral</option>
+        </select>
+        <button onClick={addEntry}>Add Entry</button>
+      </div>
+      <div>
+        {entries.map((entry, index) => (
+          <div key={index}>
+            <p>{entry.content}</p>
+            <p>Mood: {entry.mood}</p>
+            <p>Date: {new Date(entry.createdAt).toLocaleString()}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+export default MoodJournal;

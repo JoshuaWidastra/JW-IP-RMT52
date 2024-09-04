@@ -1,52 +1,78 @@
 import React, { useState, useEffect } from 'react';
+import { useSelector } from 'react-redux';
 
-const MoodJournal = ({ user }) => {
+function MoodJournal() {
   const [entries, setEntries] = useState([]);
   const [newEntry, setNewEntry] = useState('');
+  const [mood, setMood] = useState('neutral');
+  const user = useSelector(state => state.auth.user);
 
   useEffect(() => {
-    if (user) {
-      fetchEntries();
-    }
-  }, [user]);
+    // Fetch mood journal entries from the backend
+    fetchEntries();
+  }, []);
 
   const fetchEntries = async () => {
-    // Implement fetching entries from your backend
+    try {
+      const response = await fetch('http://localhost:3000/api/mood-journal', {
+        headers: {
+          'Authorization': `Bearer ${user.token}`,
+        },
+      });
+      const data = await response.json();
+      setEntries(data);
+    } catch (error) {
+      console.error('Error fetching mood journal entries:', error);
+    }
   };
 
   const addEntry = async () => {
-    // Implement adding a new entry
-  };
-
-  const updateEntry = async (id, content) => {
-    // Implement updating an entry
-  };
-
-  const deleteEntry = async (id) => {
-    // Implement deleting an entry
+    try {
+      const response = await fetch('http://localhost:3000/api/mood-journal', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${user.token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ content: newEntry, mood }),
+      });
+      const data = await response.json();
+      setEntries([...entries, data]);
+      setNewEntry('');
+      setMood('neutral');
+    } catch (error) {
+      console.error('Error adding mood journal entry:', error);
+    }
   };
 
   return (
-    <div className="mood-journal">
-      <h3>Mood Journal</h3>
-      <input
-        type="text"
-        value={newEntry}
-        onChange={(e) => setNewEntry(e.target.value)}
-        placeholder="How are you feeling?"
-      />
-      <button onClick={addEntry}>Add Entry</button>
-      <ul>
-        {entries.map((entry) => (
-          <li key={entry.id}>
-            {entry.content}
-            <button onClick={() => updateEntry(entry.id, prompt('Update entry', entry.content))}>Edit</button>
-            <button onClick={() => deleteEntry(entry.id)}>Delete</button>
-          </li>
+    <div>
+      <h2>Mood Journal</h2>
+      <div>
+        <textarea
+          value={newEntry}
+          onChange={(e) => setNewEntry(e.target.value)}
+          placeholder="How are you feeling today?"
+        />
+        <select value={mood} onChange={(e) => setMood(e.target.value)}>
+          <option value="happy">Happy</option>
+          <option value="sad">Sad</option>
+          <option value="angry">Angry</option>
+          <option value="neutral">Neutral</option>
+        </select>
+        <button onClick={addEntry}>Add Entry</button>
+      </div>
+      <div>
+        {entries.map((entry, index) => (
+          <div key={index}>
+            <p>{entry.content}</p>
+            <p>Mood: {entry.mood}</p>
+            <p>Date: {new Date(entry.createdAt).toLocaleString()}</p>
+          </div>
         ))}
-      </ul>
+      </div>
     </div>
   );
-};
+}
 
 export default MoodJournal;

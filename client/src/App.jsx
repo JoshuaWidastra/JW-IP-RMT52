@@ -5,8 +5,8 @@ import Home from './pages/Home';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
-import MusicPlayer from './pages/MusicPlayer';
-import MoodJournal from './pages/MoodJournal';
+import MusicPlayer from './components/MusicPlayer';
+import MoodJournal from './components/MoodJournal';
 import SpotifyCallback from './components/SpotifyCallback';
 import PrivateRoute from './components/PrivateRoute';
 
