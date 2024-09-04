@@ -11,6 +11,7 @@ router.get('/auth-url', (req, res) => {
   res.json({ authUrl });
 });
 
+
 // router.get('/callback', async (req, res) => {
 //   try {
 //     const { code } = req.query;
@@ -38,7 +39,11 @@ router.get('/callback', async (req, res) => {
     try {
       const { code } = req.query;
       const data = await spotifyService.handleCallback(code);
-      res.redirect(`${process.env.FRONTEND_URL}/spotify-callback?access_token=${data.access_token}`);
+      res.redirect(`${process.env.FRONTEND_URL}/spotify-callback?` + 
+        `access_token=${data.access_token}&` +
+        `refresh_token=${data.refresh_token}&` +
+        `expires_in=${data.expires_in}`
+      );
     } catch (error) {
       console.error('Error in Spotify callback:', error);
       res.redirect(`${process.env.FRONTEND_URL}/login?error=spotify_auth_failed`);

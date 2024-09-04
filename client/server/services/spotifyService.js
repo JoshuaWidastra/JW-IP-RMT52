@@ -14,26 +14,54 @@ let tokenExpirationTime = 0;
 //   return spotifyApi.createAuthorizeURL(scopes, '');
 // };
 
+// const getAuthorizationUrl = () => {
+//     const scopes = ['user-read-private', 'user-read-email', 'playlist-modify-public', 'playlist-modify-private'];
+//     return spotifyApi.createAuthorizeURL(scopes);
+//   };
+
+
+const scopes = [
+    'user-read-private',
+    'user-read-email',
+    'user-read-playback-state',
+    'user-modify-playback-state',
+    'user-read-currently-playing',
+    'streaming',
+    'app-remote-control',
+    'playlist-read-private',
+    'playlist-read-collaborative',
+    'playlist-modify-private',
+    'playlist-modify-public'
+  ];
+
 const getAuthorizationUrl = () => {
-    const scopes = ['user-read-private', 'user-read-email', 'playlist-modify-public', 'playlist-modify-private'];
     return spotifyApi.createAuthorizeURL(scopes);
-  };
+};
 
 const handleCallback = async (code) => {
-  try {
     const data = await spotifyApi.authorizationCodeGrant(code);
-    const { access_token, refresh_token, expires_in } = data.body;
+    return {
+      access_token: data.body['access_token'],
+      refresh_token: data.body['refresh_token'],
+      expires_in: data.body['expires_in']
+    };
+  };
 
-    spotifyApi.setAccessToken(access_token);
-    spotifyApi.setRefreshToken(refresh_token);
-    tokenExpirationTime = Date.now() + expires_in * 1000;
+// const handleCallback = async (code) => {
+//   try {
+//     const data = await spotifyApi.authorizationCodeGrant(code);
+//     const { access_token, refresh_token, expires_in } = data.body;
 
-    return { access_token, refresh_token };
-  } catch (error) {
-    console.error('Error handling Spotify callback:', error);
-    throw error;
-  }
-};
+//     spotifyApi.setAccessToken(access_token);
+//     spotifyApi.setRefreshToken(refresh_token);
+//     tokenExpirationTime = Date.now() + expires_in * 1000;
+
+//     return { access_token, refresh_token };
+//   } catch (error) {
+//     console.error('Error handling Spotify callback:', error);
+//     throw error;
+//   }
+// };
 
 const refreshAccessToken = async () => {
   try {

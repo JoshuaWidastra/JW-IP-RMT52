@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
-import { setSpotifyToken } from '../store/actions/spotifyActions';
+import { setSpotifyTokens } from '../store/actions/spotifyActions';
 
 function SpotifyCallback() {
   const navigate = useNavigate();
@@ -11,10 +11,12 @@ function SpotifyCallback() {
   useEffect(() => {
     const params = new URLSearchParams(location.search);
     const accessToken = params.get('access_token');
+    const refreshToken = params.get('refresh_token');
+    const expiresIn = params.get('expires_in');
     
-    if (accessToken) {
-      dispatch(setSpotifyToken(accessToken));
-      navigate('/dashboard');
+    if (accessToken && refreshToken && expiresIn) {
+      dispatch(setSpotifyTokens({ accessToken, refreshToken, expiresIn: parseInt(expiresIn, 10) }));
+      navigate('/player');
     } else {
       navigate('/login');
     }

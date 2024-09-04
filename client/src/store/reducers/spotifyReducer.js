@@ -1,15 +1,19 @@
-import { SET_SPOTIFY_TOKEN } from '../actionTypes';
+import { SET_SPOTIFY_TOKENS } from '../actionTypes';
 
 const initialState = {
-  token: null
+  accessToken: null,
+  refreshToken: null,
+  expiresIn: null
 };
 
 export default function spotifyReducer(state = initialState, action) {
   switch (action.type) {
-    case SET_SPOTIFY_TOKEN:
+    case SET_SPOTIFY_TOKENS:
       return {
         ...state,
-        token: action.payload
+        accessToken: action.payload.accessToken,
+        refreshToken: action.payload.refreshToken,
+        expiresIn: action.payload.expiresIn
       };
     default:
       return state;
