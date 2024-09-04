@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { loginUser } from '../store/actions/authActions';
+import { loginUser, loginWithGoogle } from '../store/actions/authActions';
 
 function Login() {
   const [email, setEmail] = useState('');
@@ -13,6 +13,11 @@ function Login() {
     e.preventDefault();
     dispatch(loginUser(email, password));
     navigate('/dashboard');
+  };
+
+  const handleGoogleLogin = () => {
+    dispatch(loginWithGoogle());
+    // navigation will be handled in the action creator after successful login
   };
 
   return (
@@ -33,6 +38,7 @@ function Login() {
         />
         <button type="submit">Login</button>
       </form>
+      <button onClick={handleGoogleLogin}>Login with Google</button>
     </div>
   );
 }
