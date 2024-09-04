@@ -9,10 +9,15 @@ const spotifyApi = new SpotifyWebApi({
 
 let tokenExpirationTime = 0;
 
+// const getAuthorizationUrl = () => {
+//   const scopes = ['user-read-private', 'user-read-email', 'playlist-modify-public', 'playlist-modify-private'];
+//   return spotifyApi.createAuthorizeURL(scopes, '');
+// };
+
 const getAuthorizationUrl = () => {
-  const scopes = ['user-read-private', 'user-read-email', 'playlist-modify-public', 'playlist-modify-private'];
-  return spotifyApi.createAuthorizeURL(scopes, '');
-};
+    const scopes = ['user-read-private', 'user-read-email', 'playlist-modify-public', 'playlist-modify-private'];
+    return spotifyApi.createAuthorizeURL(scopes);
+  };
 
 const handleCallback = async (code) => {
   try {

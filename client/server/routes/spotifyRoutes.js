@@ -11,28 +11,40 @@ router.get('/auth-url', (req, res) => {
   res.json({ authUrl });
 });
 
+// router.get('/callback', async (req, res) => {
+//   try {
+//     const { code } = req.query;
+//     console.log('Received code in callback:', code);
+
+//     if (usedAuthCodes.has(code)) {
+//       throw new Error('Authorization code has already been used');
+//     }
+
+//     usedAuthCodes.add(code);
+
+//     const data = await spotifyService.handleCallback(code);
+
+//     setTimeout(() => usedAuthCodes.delete(code), 60000); // remove after 1 minute
+
+//     // instead of sending JSON, redirect to the frontend with the access token -- need testing
+//     res.redirect(`${process.env.FRONTEND_URL}/spotify-callback?access_token=${data.access_token}`);
+//   } catch (error) {
+//     console.error('Error in Spotify callback:', error);
+//     res.redirect(`${process.env.FRONTEND_URL}/login?error=spotify_auth_failed`);
+//   }
+// });
+
 router.get('/callback', async (req, res) => {
-  try {
-    const { code } = req.query;
-    console.log('Received code in callback:', code);
-
-    if (usedAuthCodes.has(code)) {
-      throw new Error('Authorization code has already been used');
+    try {
+      const { code } = req.query;
+      const data = await spotifyService.handleCallback(code);
+      res.redirect(`${process.env.FRONTEND_URL}/spotify-callback?access_token=${data.access_token}`);
+    } catch (error) {
+      console.error('Error in Spotify callback:', error);
+      res.redirect(`${process.env.FRONTEND_URL}/login?error=spotify_auth_failed`);
     }
+  });
 
-    usedAuthCodes.add(code);
-
-    const data = await spotifyService.handleCallback(code);
-
-    setTimeout(() => usedAuthCodes.delete(code), 60000); // remove after 1 minute
-
-    // instead of sending JSON, redirect to the frontend with the access token -- need testing
-    res.redirect(`${process.env.FRONTEND_URL}/spotify-callback?access_token=${data.access_token}`);
-  } catch (error) {
-    console.error('Error in Spotify callback:', error);
-    res.redirect(`${process.env.FRONTEND_URL}/login?error=spotify_auth_failed`);
-  }
-});
 
 router.get('/search', authenticateUser, async (req, res) => {
   try {
