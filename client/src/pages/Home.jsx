@@ -3,7 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import MusicPlayer from '../components/MusicPlayer';
 import { getAuthUrl, getAccessToken, getRecommendations } from '../services/spotify';
 import { analyzeMood } from '../services/openai';
-import { searchSong, getLyrics } from '../services/genius';
+import { searchSong } from '../services/genius';
 
 function Home() {
   const [playlist, setPlaylist] = useState([]);
@@ -28,19 +28,15 @@ function Home() {
       if (tracks.length > 0) {
         const playlistTracks = await Promise.all(tracks.map(async track => {
           const geniusData = await searchSong(track.name, track.artists[0].name);
-          let lyrics = null;
-          if (geniusData) {
-            lyrics = await getLyrics(geniusData.url);
-          }
           return {
             id: track.id,
             title: track.name,
             artist: track.artists[0].name,
             url: track.preview_url,
-            lyrics: lyrics
+            geniusUrl: geniusData ? geniusData.url : null
           };
         }));
-        console.log('Mapped playlist tracks with lyrics:', playlistTracks);
+        console.log('Playlist tracks with Genius info:', playlistTracks);
         setPlaylist(playlistTracks);
 
         // Analyze mood
@@ -115,15 +111,15 @@ function Home() {
               <p>{moodAnalysis}</p>
             </div>
           )}
-          <h2>Playlist with Lyrics</h2>
+          <h2>Playlist Information</h2>
           <ul>
-            {playlist.map(track => (
-              <li key={track.id}>
-                <h3>{track.title} by {track.artist}</h3>
-                {track.lyrics ? (
-                  <pre>{track.lyrics}</pre>
-                ) : (
-                  <p>Lyrics not available</p>
+          {playlist.map(track => (
+          <li key={track.id}>
+            <h3>{track.title} by {track.artist}</h3>
+            {track.geniusUrl ? (
+              <a href={track.geniusUrl} target="_blank" rel="noopener noreferrer">View on Genius</a>
+            ) : (
+              <p>No Genius page found</p>
                 )}
               </li>
             ))}

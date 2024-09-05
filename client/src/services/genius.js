@@ -4,11 +4,14 @@ const SERVER_URL = import.meta.env.VITE_SERVER_URL || 'http://localhost:5000';
 
 export const searchSong = async (title, artist) => {
   try {
+    console.log(`Searching for: ${title} by ${artist}`);
     const response = await axios.get(`${SERVER_URL}/api/genius/search`, {
       params: {
         q: `${title} ${artist}`
       }
     });
+
+    console.log('Received response:', response.data);
 
     const hit = response.data.response.hits[0];
     if (!hit) {
@@ -23,19 +26,7 @@ export const searchSong = async (title, artist) => {
       url: hit.result.url
     };
   } catch (error) {
-    console.error('Error searching for song:', error);
+    console.error('Error searching for song:', error.response ? error.response.data : error.message);
     throw error;
-  }
-};
-
-export const getLyrics = async (url) => {
-  try {
-    const response = await axios.get(`${SERVER_URL}/api/genius/lyrics`, {
-      params: { url }
-    });
-    return response.data.lyrics;
-  } catch (error) {
-    console.error('Error fetching lyrics:', error);
-    return null;
   }
 };
