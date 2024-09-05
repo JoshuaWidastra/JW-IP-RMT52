@@ -3,7 +3,6 @@ import axios from 'axios';
 const OPENAI_API_URL = 'https://api.openai.com/v1/chat/completions';
 
 const apiKey = import.meta.env.VITE_OPENAI_API_KEY;
-console.log('OpenAI API Key (first 5 chars):', apiKey.substring(0, 5));
 
 const openai = axios.create({
   baseURL: OPENAI_API_URL,
@@ -16,32 +15,28 @@ const openai = axios.create({
 export const analyzeMood = async (tracks) => {
   console.log('Analyzing mood for tracks:', tracks);
   
-  const trackInfo = tracks.map(track => {
-    const lyricsExcerpt = track.lyrics ? track.lyrics.substring(0, 200) + '...' : 'Lyrics not available';
-    return `${track.title} by ${track.artist}. Lyrics excerpt: ${lyricsExcerpt}`;
-  }).join('\n\n');
+  const trackInfo = tracks.map(track => `${track.title} by ${track.artist}`).join(', ');
   
-  const prompt = `Analyze the mood of this playlist, considering both the song titles and available lyrics:\n\n${trackInfo}\n\nProvide a concise summary (max 300 words) of the overall mood and emotional tone of these songs. Also, categorize each song into one of these moods: Happy, Sad, Energetic, Calm, Romantic, Angry.`;
+  const prompt = `Analyze the mood of this playlist: ${trackInfo}. Provide a concise summary (max 200 words) of the overall mood and emotional tone of these songs. Also, categorize each song into one of these moods: Happy, Sad, Energetic, Calm, Romantic, Angry.`;
 
   try {
     console.log('Sending request to OpenAI API');
     const response = await openai.post('', {
       model: "gpt-3.5-turbo",
       messages: [{"role": "user", "content": prompt}],
-      max_tokens: 500  // increased limit to accommodate lyrics analysis
+      max_tokens: 300 // make sure it diplay enough characters
     });
 
-    console.log('OpenAI response:', response.data);
-    return response.data.choices[0].message.content.trim();
+    const moodAnalysis = response.data.choices[0].message.content.trim();
+    console.log('OpenAI mood analysis:', moodAnalysis);
+    return moodAnalysis;
   } catch (error) {
     console.error('Error analyzing mood:', error);
     if (error.response) {
       console.error('OpenAI API response:', error.response.data);
-      if (error.response.status === 401) {
-        throw new Error('OpenAI API key is invalid. Please check your API key.');
-      } else if (error.response.status === 429) {
+      if (error.response.status === 429) {
         throw new Error('OpenAI API rate limit exceeded. Please try again later.');
-      } else if (error.response.data && error.response.data.error) {
+      } else {
         throw new Error(`OpenAI API error: ${error.response.data.error.message}`);
       }
     }
