@@ -1,9 +1,8 @@
-// client/src/pages/Home.jsx
-
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import MusicPlayer from '../components/MusicPlayer';
 import { getAuthUrl, getAccessToken, getRecommendations } from '../services/spotify';
+import { analyzeMood } from '../services/openai';
 
 function Home() {
   const [playlist, setPlaylist] = useState([]);
@@ -26,13 +25,25 @@ function Home() {
       const tracks = await getRecommendations();
       console.log('Recommendations fetched:', tracks);
       if (tracks.length > 0) {
-        setPlaylist(tracks.map(track => ({
+        const playlistTracks = tracks.map(track => ({
           id: track.id,
           title: track.name,
           artist: track.artists[0].name,
           url: track.preview_url
-        })));
-        setError(null); // Clear any previous errors if we successfully got tracks
+        }));
+        console.log('Mapped playlist tracks:', playlistTracks);
+        setPlaylist(playlistTracks);
+
+        // Analyze mood
+        console.log('Analyzing mood for the playlist');
+        try {
+          const moodAnalysisResult = await analyzeMood(playlistTracks);
+          console.log('Mood analysis result:', moodAnalysisResult);
+          setMoodAnalysis(moodAnalysisResult);
+        } catch (moodError) {
+          console.error('Error in mood analysis:', moodError);
+          setError(moodError.message);
+        }
       } else {
         setError('No tracks found. Please try again.');
       }
@@ -40,6 +51,8 @@ function Home() {
       console.error('Error in handleSpotifyCallback:', error);
       if (error.response && error.response.data.error === 'invalid_grant') {
         console.log('Invalid grant error caught, but ignoring as we might have already processed the code');
+      } else if (error.response && error.response.status === 401) {
+        setError('Authentication failed. Please check your API keys and try again.');
       } else {
         setError(`Failed to fetch playlist: ${error.message}`);
       }

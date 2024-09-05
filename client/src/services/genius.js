@@ -1,28 +1,49 @@
 import axios from 'axios';
 
-const GENIUS_API_BASE_URL = 'https://api.genius.com';
+const GENIUS_API_URL = 'https://api.genius.com';
+const GENIUS_ACCESS_TOKEN = import.meta.env.VITE_GENIUS_ACCESS_TOKEN;
 
-export const fetchLyrics = async (trackName, artistName) => {
+const genius = axios.create({
+  baseURL: GENIUS_API_URL,
+  headers: {
+    'Authorization': `Bearer ${GENIUS_ACCESS_TOKEN}`
+  }
+});
+
+export const searchSong = async (title, artist) => {
   try {
-    const response = await axios.get(`${GENIUS_API_BASE_URL}/search`, {
+    const response = await genius.get('/search', {
       params: {
-        q: `${trackName} ${artistName}`,
-      },
-      headers: {
-        Authorization: `Bearer ${process.env.GENIUS_ACCESS_TOKEN}`,
-      },
+        q: `${title} ${artist}`
+      }
     });
 
-    const songId = response.data.response.hits[0].result.id;
-    const lyricsResponse = await axios.get(`${GENIUS_API_BASE_URL}/songs/${songId}`, {
-      headers: {
-        Authorization: `Bearer ${process.env.GENIUS_ACCESS_TOKEN}`,
-      },
-    });
+    const hit = response.data.response.hits[0];
+    if (!hit) {
+      console.log(`No results found for ${title} by ${artist}`);
+      return null;
+    }
 
-    return lyricsResponse.data.response.song.lyrics.body.plain;
+    return {
+      id: hit.result.id,
+      title: hit.result.title,
+      artist: hit.result.primary_artist.name,
+      url: hit.result.url
+    };
+  } catch (error) {
+    console.error('Error searching for song:', error);
+    throw error;
+  }
+};
+
+export const getLyrics = async (url) => {
+  try {
+    const response = await axios.get(url);
+    const html = response.data;
+    const lyrics = html.split('<div class="lyrics">')[1].split('</div>')[0].trim();
+    return lyrics;
   } catch (error) {
     console.error('Error fetching lyrics:', error);
-    return '';
+    return null;
   }
 };
