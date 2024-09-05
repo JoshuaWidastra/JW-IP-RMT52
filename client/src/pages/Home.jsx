@@ -1,73 +1,40 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { useSelector, useDispatch } from 'react-redux';
 import MusicPlayer from '../components/MusicPlayer';
-import { getAuthUrl, getAccessToken, getRecommendations } from '../services/spotify';
+import { getAuthUrl } from '../services/spotify';
+import { fetchAccessToken, fetchRecommendations } from '../store/spotifySlice';
 import { analyzeMood } from '../services/openai';
-import { searchSong } from '../services/genius';
 
 function Home() {
-  const [playlist, setPlaylist] = useState([]);
+  const dispatch = useDispatch();
+  const { playlist, status, error } = useSelector((state) => state.spotify);
   const [moodAnalysis, setMoodAnalysis] = useState(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState(null);
   const navigate = useNavigate();
   const location = useLocation();
   const authCodeProcessed = useRef(false);
 
   const handleSpotifyCallback = useCallback(async (code) => {
     console.log('Handling Spotify callback with code:', code);
-    setIsLoading(true);
-    setError(null);
     try {
-      console.log('Attempting to get access token');
-      await getAccessToken(code);
-      console.log('Access token obtained successfully');
-      console.log('Fetching recommendations');
-      const tracks = await getRecommendations();
-      console.log('Recommendations fetched:', tracks);
-      if (tracks.length > 0) {
-        const playlistTracks = await Promise.all(tracks.map(async track => {
-          const geniusData = await searchSong(track.name, track.artists[0].name);
-          return {
-            id: track.id,
-            title: track.name,
-            artist: track.artists[0].name,
-            url: track.preview_url,
-            geniusUrl: geniusData ? geniusData.url : null
-          };
-        }));
-        console.log('Playlist tracks with Genius info:', playlistTracks);
-        setPlaylist(playlistTracks);
+      await dispatch(fetchAccessToken(code)).unwrap();
+      const tracks = await dispatch(fetchRecommendations()).unwrap();
+      console.log('Playlist tracks with Genius info:', tracks);
 
-        // Analyze mood
-        console.log('Analyzing mood for the playlist');
-        try {
-          const moodAnalysisResult = await analyzeMood(playlistTracks);
-          console.log('Mood analysis result:', moodAnalysisResult);
-          setMoodAnalysis(moodAnalysisResult);
-        } catch (moodError) {
-          console.error('Error in mood analysis:', moodError);
-          setError(moodError.message);
-        }
-      } else {
-        setError('No tracks found. Please try again.');
+      // Analyze mood
+      console.log('Analyzing mood for the playlist');
+      try {
+        const moodAnalysisResult = await analyzeMood(tracks);
+        console.log('Mood analysis result:', moodAnalysisResult);
+        setMoodAnalysis(moodAnalysisResult);
+      } catch (moodError) {
+        console.error('Error in mood analysis:', moodError);
+        throw moodError;
       }
     } catch (error) {
       console.error('Error in handleSpotifyCallback:', error);
-      if (error.response && error.response.data.error === 'invalid_grant') {
-        console.log('Invalid grant error caught, but ignoring as we might have already processed the code');
-      } else if (error.response && error.response.status === 401) {
-        setError('Authentication failed. Please check your API keys and try again.');
-      } else {
-        setError(`Failed to fetch playlist: ${error.message}`);
-      }
-      if (error.response) {
-        console.error('Error response:', error.response.data);
-      }
-    } finally {
-      setIsLoading(false);
     }
-  }, []);
+  }, [dispatch]);
 
   useEffect(() => {
     console.log('Home component mounted or updated');
@@ -92,7 +59,7 @@ function Home() {
     window.location.href = getAuthUrl();
   };
 
-  if (isLoading) {
+  if (status === 'loading') {
     return <div>Loading playlist...</div>;
   }
 
@@ -113,13 +80,13 @@ function Home() {
           )}
           <h2>Playlist Information</h2>
           <ul>
-          {playlist.map(track => (
-          <li key={track.id}>
-            <h3>{track.title} by {track.artist}</h3>
-            {track.geniusUrl ? (
-              <a href={track.geniusUrl} target="_blank" rel="noopener noreferrer">View on Genius</a>
-            ) : (
-              <p>No Genius page found</p>
+            {playlist.map(track => (
+              <li key={track.id}>
+                <h3>{track.title} by {track.artist}</h3>
+                {track.geniusUrl ? (
+                  <a href={track.geniusUrl} target="_blank" rel="noopener noreferrer">View on Genius</a>
+                ) : (
+                  <p>No Genius page found</p>
                 )}
               </li>
             ))}
