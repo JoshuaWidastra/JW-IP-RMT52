@@ -1,6 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { getAccessToken, getRecommendations } from '../services/spotify';
-import { searchSong } from '../services/genius';
 
 export const fetchAccessToken = createAsyncThunk(
   'spotify/fetchAccessToken',
@@ -14,17 +13,12 @@ export const fetchRecommendations = createAsyncThunk(
   'spotify/fetchRecommendations',
   async (_, { getState }) => {
     const tracks = await getRecommendations();
-    const playlistTracks = await Promise.all(tracks.map(async track => {
-      const geniusData = await searchSong(track.name, track.artists[0].name);
-      return {
-        id: track.id,
-        title: track.name,
-        artist: track.artists[0].name,
-        url: track.preview_url,
-        geniusUrl: geniusData ? geniusData.url : null
-      };
+    return tracks.slice(0, 5).map(track => ({
+      id: track.id,
+      title: track.name,
+      artist: track.artists[0].name,
+      url: track.preview_url
     }));
-    return playlistTracks;
   }
 );
 
@@ -32,7 +26,7 @@ const spotifySlice = createSlice({
   name: 'spotify',
   initialState: {
     accessToken: null,
-    playlist: [],
+    recommendations: [],
     status: 'idle',
     error: null,
   },
@@ -55,7 +49,7 @@ const spotifySlice = createSlice({
       })
       .addCase(fetchRecommendations.fulfilled, (state, action) => {
         state.status = 'succeeded';
-        state.playlist = action.payload;
+        state.recommendations = action.payload;
       })
       .addCase(fetchRecommendations.rejected, (state, action) => {
         state.status = 'failed';

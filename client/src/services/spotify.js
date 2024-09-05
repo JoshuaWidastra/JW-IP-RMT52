@@ -104,3 +104,30 @@ export const getRecommendations = async (seed_genres = 'pop') => {
     throw error;
   }
 };
+
+export const searchTracks = async (query) => {
+  console.log('Searching for tracks:', query);
+  try {
+    const token = await getValidToken();
+    const response = await axios.get(`${SPOTIFY_BASE_URL}/search`, {
+      params: {
+        q: query,
+        type: 'track',
+        limit: 5
+      },
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    console.log('Search results:', response.data.tracks.items);
+    return response.data.tracks.items.map(track => ({
+      id: track.id,
+      title: track.name,
+      artist: track.artists[0].name,
+      url: track.preview_url
+    }));
+  } catch (error) {
+    console.error('Error searching tracks:', error);
+    throw error;
+  }
+};
