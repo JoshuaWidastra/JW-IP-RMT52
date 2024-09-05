@@ -57,6 +57,10 @@ function Home() {
     dispatch(addSong(song));
   }, [dispatch]);
 
+  const handleShuffleSongs = useCallback(() => {
+    dispatch(fetchRecommendations());
+  }, [dispatch]);
+
   const error = spotifyError || openAIError || geniusError;
   const isLoading = spotifyStatus === 'loading' || openAIStatus === 'loading' || geniusStatus === 'loading';
 
@@ -72,6 +76,7 @@ function Home() {
         <button onClick={handleLogin}>Login to Spotify</button>
       ) : (
         <>
+          <button onClick={handleShuffleSongs}>Shuffle Songs</button>
           <MusicPlayer playlist={recommendations} />
           {moodAnalysis && (
             <div>

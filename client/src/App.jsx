@@ -1,10 +1,15 @@
 import React from 'react';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 import Navbar from './components/Navbar';
 import Home from './pages/Home';
 import Login from './pages/Login';
-import Profile from './pages/Profile';
 import Playlist from './pages/Playlist';
+
+const ProtectedRoute = ({ children }) => {
+  const isAuthenticated = useSelector(state => !!state.spotify.accessToken);
+  return isAuthenticated ? children : <Navigate to="/" />;
+};
 
 function App() {
   return (
@@ -15,8 +20,14 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/callback" element={<Home />} />
           <Route path="/login" element={<Login />} />
-          <Route path="/profile" element={<Profile />} />
-          <Route path="/playlist" element={<Playlist />} />
+          <Route 
+            path="/playlist" 
+            element={
+              <ProtectedRoute>
+                <Playlist />
+              </ProtectedRoute>
+            } 
+          />
         </Routes>
       </div>
     </Router>

@@ -1,24 +1,32 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
-// Import your logout action here
-// import { logout } from '../store/authSlice';
+import { Link, useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { logout } from '../store/spotifySlice';
 
 function Navbar() {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const isAuthenticated = useSelector(state => !!state.spotify.accessToken);
 
   const handleSignOut = () => {
-    // Implement your sign out logic here
-    // For example: dispatch(logout());
-    console.log('User signed out');
+    dispatch(logout());
+    // Clear any local storage items if necessary
+    localStorage.removeItem('spotify_access_token');
+    localStorage.removeItem('spotify_refresh_token');
+    // Redirect to home page
+    navigate('/');
   };
 
   return (
     <nav style={styles.nav}>
       <ul style={styles.ul}>
         <li style={styles.li}><Link to="/" style={styles.link}>Home</Link></li>
-        <li style={styles.li}><Link to="/playlist" style={styles.link}>Playlist</Link></li>
-        <li style={styles.li}><button onClick={handleSignOut} style={styles.button}>Sign Out</button></li>
+        {isAuthenticated && (
+          <>
+            <li style={styles.li}><Link to="/playlist" style={styles.link}>Playlist</Link></li>
+            <li style={styles.li}><button onClick={handleSignOut} style={styles.button}>Sign Out</button></li>
+          </>
+        )}
       </ul>
     </nav>
   );

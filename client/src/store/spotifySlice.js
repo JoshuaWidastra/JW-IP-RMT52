@@ -30,7 +30,14 @@ const spotifySlice = createSlice({
     status: 'idle',
     error: null,
   },
-  reducers: {},
+  reducers: {
+    logout: (state) => {
+      state.accessToken = null;
+      state.recommendations = [];
+      state.status = 'idle';
+      state.error = null;
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(fetchAccessToken.pending, (state) => {
@@ -58,4 +65,5 @@ const spotifySlice = createSlice({
   },
 });
 
+export const { logout } = spotifySlice.actions;
 export default spotifySlice.reducer;
