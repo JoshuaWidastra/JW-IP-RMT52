@@ -1,18 +1,10 @@
 import axios from 'axios';
 
-const GENIUS_API_URL = 'https://api.genius.com';
-const GENIUS_ACCESS_TOKEN = import.meta.env.VITE_GENIUS_ACCESS_TOKEN;
-
-const genius = axios.create({
-  baseURL: GENIUS_API_URL,
-  headers: {
-    'Authorization': `Bearer ${GENIUS_ACCESS_TOKEN}`
-  }
-});
+const SERVER_URL = import.meta.env.VITE_SERVER_URL || 'http://localhost:5000';
 
 export const searchSong = async (title, artist) => {
   try {
-    const response = await genius.get('/search', {
+    const response = await axios.get(`${SERVER_URL}/api/genius/search`, {
       params: {
         q: `${title} ${artist}`
       }
@@ -38,10 +30,10 @@ export const searchSong = async (title, artist) => {
 
 export const getLyrics = async (url) => {
   try {
-    const response = await axios.get(url);
-    const html = response.data;
-    const lyrics = html.split('<div class="lyrics">')[1].split('</div>')[0].trim();
-    return lyrics;
+    const response = await axios.get(`${SERVER_URL}/api/genius/lyrics`, {
+      params: { url }
+    });
+    return response.data.lyrics;
   } catch (error) {
     console.error('Error fetching lyrics:', error);
     return null;

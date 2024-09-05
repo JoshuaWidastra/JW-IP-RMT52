@@ -3,6 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import MusicPlayer from '../components/MusicPlayer';
 import { getAuthUrl, getAccessToken, getRecommendations } from '../services/spotify';
 import { analyzeMood } from '../services/openai';
+import { searchSong, getLyrics } from '../services/genius';
 
 function Home() {
   const [playlist, setPlaylist] = useState([]);
@@ -25,13 +26,21 @@ function Home() {
       const tracks = await getRecommendations();
       console.log('Recommendations fetched:', tracks);
       if (tracks.length > 0) {
-        const playlistTracks = tracks.map(track => ({
-          id: track.id,
-          title: track.name,
-          artist: track.artists[0].name,
-          url: track.preview_url
+        const playlistTracks = await Promise.all(tracks.map(async track => {
+          const geniusData = await searchSong(track.name, track.artists[0].name);
+          let lyrics = null;
+          if (geniusData) {
+            lyrics = await getLyrics(geniusData.url);
+          }
+          return {
+            id: track.id,
+            title: track.name,
+            artist: track.artists[0].name,
+            url: track.preview_url,
+            lyrics: lyrics
+          };
         }));
-        console.log('Mapped playlist tracks:', playlistTracks);
+        console.log('Mapped playlist tracks with lyrics:', playlistTracks);
         setPlaylist(playlistTracks);
 
         // Analyze mood
@@ -106,6 +115,19 @@ function Home() {
               <p>{moodAnalysis}</p>
             </div>
           )}
+          <h2>Playlist with Lyrics</h2>
+          <ul>
+            {playlist.map(track => (
+              <li key={track.id}>
+                <h3>{track.title} by {track.artist}</h3>
+                {track.lyrics ? (
+                  <pre>{track.lyrics}</pre>
+                ) : (
+                  <p>Lyrics not available</p>
+                )}
+              </li>
+            ))}
+          </ul>
         </>
       )}
     </div>
