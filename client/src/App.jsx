@@ -4,11 +4,12 @@ import { useSelector } from 'react-redux';
 import Navbar from './components/Navbar';
 import Home from './pages/Home';
 import Login from './pages/Login';
+import Register from './pages/Register';
 import Playlist from './pages/Playlist';
 
 const ProtectedRoute = ({ children }) => {
-  const isAuthenticated = useSelector(state => !!state.spotify.accessToken);
-  return isAuthenticated ? children : <Navigate to="/" />;
+  const isAuthenticated = useSelector(state => state.auth.isAuthenticated);
+  return isAuthenticated ? children : <Navigate to="/login" />;
 };
 
 function App() {
@@ -17,9 +18,17 @@ function App() {
       <div className="App">
         <Navbar />
         <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/callback" element={<Home />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/callback" element={<ProtectedRoute><Home /></ProtectedRoute>} />
+          <Route 
+            path="/" 
+            element={
+              <ProtectedRoute>
+                <Home />
+              </ProtectedRoute>
+            } 
+          />
           <Route 
             path="/playlist" 
             element={

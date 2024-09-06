@@ -7,6 +7,7 @@ import { fetchAccessToken, fetchRecommendations } from '../store/spotifySlice';
 import { fetchMoodAnalysis } from '../store/openAISlice';
 import { fetchSongInfo } from '../store/geniusSlice';
 import { addSong } from '../store/playlistSlice';
+import { setSpotifyConnected } from '../store/authSlice';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '../styles/custom.css';
 
@@ -16,14 +17,27 @@ function Home() {
   const location = useLocation();
   const authCodeProcessed = useRef(false);
 
-  const { recommendations, status: spotifyStatus, error: spotifyError } = useSelector((state) => state.spotify);
+  const { accessToken, recommendations, status: spotifyStatus, error: spotifyError } = useSelector((state) => state.spotify);
   const { moodAnalysis, status: openAIStatus, error: openAIError } = useSelector((state) => state.openAI);
   const { songInfo, status: geniusStatus, error: geniusError } = useSelector((state) => state.genius);
+  const { isAuthenticated, isSpotifyConnected } = useSelector((state) => state.auth);
+
+  useEffect(() => {
+    if (!isAuthenticated) {
+      navigate('/login');
+    }
+  }, [isAuthenticated, navigate]);
+
+  const handleSpotifyConnect = useCallback(() => {
+    console.log('Initiating Spotify connection');
+    window.location.href = getAuthUrl();
+  }, []);
 
   const handleSpotifyCallback = useCallback(async (code) => {
     console.log('Handling Spotify callback with code:', code);
     try {
       await dispatch(fetchAccessToken(code)).unwrap();
+      dispatch(setSpotifyConnected(true));
       const tracks = await dispatch(fetchRecommendations()).unwrap();
       console.log('Recommended tracks:', tracks);
 
@@ -50,11 +64,6 @@ function Home() {
     }
   }, [location, navigate, handleSpotifyCallback]);
 
-  const handleLogin = useCallback(() => {
-    console.log('Initiating Spotify login');
-    window.location.href = getAuthUrl();
-  }, []);
-
   const handleAddToPlaylist = useCallback((song) => {
     dispatch(addSong(song));
   }, [dispatch]);
@@ -63,19 +72,20 @@ function Home() {
     dispatch(fetchRecommendations());
   }, [dispatch]);
 
-  const error = spotifyError || openAIError || geniusError;
+  const error = spotifyError || openAIStatus === 'error' || geniusStatus === 'error';
   const isLoading = spotifyStatus === 'loading' || openAIStatus === 'loading' || geniusStatus === 'loading';
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return <div className="container mt-5 text-center">Loading...</div>;
   }
 
   return (
     <div className="container-fluid mt-5">
+      <h1 className="text-center mb-4">MoodMix</h1>
       {error && <div className="alert alert-danger">{error}</div>}
-      {recommendations.length === 0 ? (
+      {!isSpotifyConnected ? (
         <div className="text-center">
-          <button className="btn btn-primary btn-lg" onClick={handleLogin}>Login to Spotify</button>
+          <button className="btn btn-primary btn-lg" onClick={handleSpotifyConnect}>Connect to Spotify</button>
         </div>
       ) : (
         <div className="row justify-content-center">

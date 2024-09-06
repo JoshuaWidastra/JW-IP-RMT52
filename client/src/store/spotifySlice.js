@@ -1,10 +1,12 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { getAccessToken, getRecommendations } from '../services/spotify';
+import { setSpotifyConnected } from './authSlice';
 
 export const fetchAccessToken = createAsyncThunk(
   'spotify/fetchAccessToken',
-  async (code) => {
+  async (code, { dispatch }) => {
     const token = await getAccessToken(code);
+    dispatch(setSpotifyConnected(true));
     return token;
   }
 );

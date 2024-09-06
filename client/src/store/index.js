@@ -3,6 +3,7 @@ import spotifyReducer from './spotifySlice';
 import openAIReducer from './openAISlice';
 import geniusReducer from './geniusSlice';
 import playlistReducer from './playlistSlice';
+import authReducer from './authSlice'
 
 export const store = configureStore({
   reducer: {
@@ -10,5 +11,6 @@ export const store = configureStore({
     openAI: openAIReducer,
     genius: geniusReducer,
     playlist: playlistReducer,
+    auth: authReducer
   },
 });

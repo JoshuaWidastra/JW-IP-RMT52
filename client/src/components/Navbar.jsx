@@ -1,20 +1,19 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { logout } from '../store/spotifySlice';
+import { logout } from '../store/authSlice';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '../styles/custom.css';
 
 function Navbar() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const isAuthenticated = useSelector(state => !!state.spotify.accessToken);
+  const auth = useSelector(state => state.auth);
+  const isAuthenticated = auth?.isAuthenticated;
 
   const handleSignOut = () => {
     dispatch(logout());
-    localStorage.removeItem('spotify_access_token');
-    localStorage.removeItem('spotify_refresh_token');
-    navigate('/');
+    navigate('/login');
   };
 
   return (
@@ -22,11 +21,16 @@ function Navbar() {
       <div className="container-fluid">
         <Link className="navbar-brand" to="/">MoodMix</Link>
         <div className="navbar-nav ms-auto">
-          <Link className="nav-link" to="/">Home</Link>
-          {isAuthenticated && (
+          {isAuthenticated ? (
             <>
+              <Link className="nav-link" to="/">Home</Link>
               <Link className="nav-link" to="/playlist">Playlist</Link>
               <button className="btn btn-link nav-link" onClick={handleSignOut}>Sign Out</button>
+            </>
+          ) : (
+            <>
+              <Link className="nav-link" to="/login">Login</Link>
+              <Link className="nav-link" to="/register">Register</Link>
             </>
           )}
         </div>
