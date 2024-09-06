@@ -1,5 +1,3 @@
-// client/src/services/spotify.js
-
 import axios from 'axios';
 
 const SPOTIFY_BASE_URL = 'https://api.spotify.com/v1';

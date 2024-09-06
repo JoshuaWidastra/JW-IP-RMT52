@@ -7,6 +7,8 @@ import { fetchAccessToken, fetchRecommendations } from '../store/spotifySlice';
 import { fetchMoodAnalysis } from '../store/openAISlice';
 import { fetchSongInfo } from '../store/geniusSlice';
 import { addSong } from '../store/playlistSlice';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import '../styles/custom.css';
 
 function Home() {
   const dispatch = useDispatch();
@@ -69,34 +71,54 @@ function Home() {
   }
 
   return (
-    <div>
-      <h1>MoodMix</h1>
-      {error && <div style={{color: 'red'}}>{error}</div>}
+    <div className="container-fluid mt-5">
+      {error && <div className="alert alert-danger">{error}</div>}
       {recommendations.length === 0 ? (
-        <button onClick={handleLogin}>Login to Spotify</button>
+        <div className="text-center">
+          <button className="btn btn-primary btn-lg" onClick={handleLogin}>Login to Spotify</button>
+        </div>
       ) : (
-        <>
-          <button onClick={handleShuffleSongs}>Shuffle Songs</button>
-          <MusicPlayer playlist={recommendations} />
-          {moodAnalysis && (
-            <div>
-              <h2>Mood Analysis</h2>
-              <p>{moodAnalysis}</p>
+        <div className="row justify-content-center">
+          <div className="col-md-3">
+            <div className="mood-analysis card">
+              <div className="card-body">
+                <h2 className="card-title">Mood Analysis</h2>
+                {moodAnalysis && <p className="card-text">{moodAnalysis}</p>}
+              </div>
             </div>
-          )}
-          <h2>Recommended Songs</h2>
-          <ul>
-            {recommendations.map(track => (
-              <li key={track.id}>
-                <h3>{track.title} by {track.artist}</h3>
-                {songInfo[`${track.title}-${track.artist}`]?.url && (
-                  <a href={songInfo[`${track.title}-${track.artist}`].url} target="_blank" rel="noopener noreferrer">View on Genius</a>
-                )}
-                <button onClick={() => handleAddToPlaylist(track)}>Add to Playlist</button>
-              </li>
-            ))}
-          </ul>
-        </>
+          </div>
+          <div className="col-md-6">
+            <div className="card music-player-card">
+              <div className="card-body">
+                <MusicPlayer 
+                  playlist={recommendations}
+                  onShuffle={handleShuffleSongs}
+                />
+              </div>
+            </div>
+          </div>
+          <div className="col-md-3">
+            <div className="recommended-songs card">
+              <div className="card-body">
+                <h2 className="card-title">Recommended Songs</h2>
+                <ul className="list-group list-group-flush">
+                  {recommendations.map(track => (
+                    <li key={track.id} className="list-group-item bg-dark">
+                      <h5 className="mb-1">{track.title}</h5>
+                      <p className="mb-1">{track.artist}</p>
+                      <div className="btn-group" role="group">
+                        {songInfo[`${track.title}-${track.artist}`]?.url && (
+                          <a href={songInfo[`${track.title}-${track.artist}`].url} target="_blank" rel="noopener noreferrer" className="btn btn-sm btn-secondary">View on Genius</a>
+                        )}
+                        <button className="btn btn-sm btn-primary" onClick={() => handleAddToPlaylist(track)}>Add to Playlist</button>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );
