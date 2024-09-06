@@ -1,0 +1,41 @@
+MoodMix/
+├── client/
+│   ├── public/
+│   ├── src/
+│   │   ├── components/
+│   │   ├── pages/
+│   │   ├── services/
+│   │   │   └── spotifyService.js
+│   │   ├── store/
+│   │   ├── styles/
+│   │   ├── utils/
+│   │   ├── App.jsx
+│   │   ├── main.jsx
+│   │   └── firebase.js
+│   ├── .env
+│   ├── .env.example
+│   ├── .eslintrc.cjs
+│   ├── .gitignore
+│   ├── index.html
+│   ├── package.json
+│   ├── README.md
+│   └── vite.config.js
+├── server/
+│   ├── config/
+│   ├── controllers/
+│   ├── data/
+│   ├── helpers/
+│   ├── middleware/
+│   │   └── auth.js
+│   ├── models/
+│   ├── routes/
+│   │   └── spotifyRoutes.js
+│   ├── services/
+│   │   └── spotifyService.js
+│   ├── .env
+│   ├── .env.example
+│   ├── .gitignore
+│   ├── app.js
+│   ├── package.json
+│   └── README.md
+└── README.md

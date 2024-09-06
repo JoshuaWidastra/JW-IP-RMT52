@@ -1,0 +1,109 @@
+
+# MoodMix: AI-Powered Mood-Based Music Curator - Full Stack Project Plan
+
+## 1. Project Setup and Planning
+- [X] Initialize Git repository (use forking, not cloning)
+- [X] Set up GitHub Workflow (branch, commit, merge)
+- [X] Create React app using Vite
+- [X] Set up Express.js backend
+- [X] Configure Firebase for database and authentication
+- [X] Install necessary dependencies (including `cors`)
+
+## 2. New Pages and Features
+- [X] Home Page: Design and implement the main home page with all necessary information.
+- [X] Login Page:
+  - [X] Implement email/password login functionality.
+  - [X] Integrate Google sign-in.
+- [X] Register Page:
+  - [X] Create user registration form and validation.
+- [ ] Music Player Page:
+  - [ ] Create a dedicated page with a music player.
+  - [ ] Implement controls (play, pause, skip, rewind).
+  - [ ] Utilize OpenAI and Genius API for enhanced functionality.
+  - [ ] Option to use a template or plugin for the music player.
+- [ ] CRUD Operations Page:
+  - [ ] Implement the planned CRUD operations for the Mood Journal as defined in the project tracker.
+
+## 3. Backend Development
+- [X] Set up Express server
+- [X] Implement CORS middleware
+- [X] Implement authentication middleware
+- [X] Create REST API endpoints for:
+  - [X] User authentication
+  - [ ] Mood input
+  - [ ] Playlist generation
+  - [ ] Feedback collection
+- [X] Implement API documentation
+- [X] Set up Firebase connection
+- [X] Integrate Spotify API
+  - [X] Implement track search
+  - [X] Manage playlist creation
+  - [X] Retrieve audio features
+  - [X] Implement authentication flow
+  - [X] Create functions for searching tracks
+  - [X] Implement playlist creation
+- [ ] Integrate OpenAI API
+  - [ ] Implement lyric analysis
+  - [ ] Generate mood insights
+- [ ] Integrate Genius API
+  - [ ] Fetch detailed song information and lyrics
+  - [ ] Retrieve artist background information
+- [X] Implement user authentication (with Google OAuth)
+- [ ] Set up testing environment (aim for 80% coverage)
+
+## 4. Frontend Development
+- [ ] Set up React components structure
+- [ ] Implement React Router for navigation
+- [ ] Set up Redux for state management
+- [ ] Create main app layout with responsive design (Desktop, Tab, Mobile)
+- [ ] Implement user authentication UI
+- [ ] Create UI for:
+  - [ ] Mood input
+  - [ ] Playlist display
+  - [ ] Activity selection
+  - [ ] Feedback collection
+  - [ ] Song and artist information display
+- [ ] Implement data fetching from backend
+- [ ] Integrate Spotify playback SDK (if time allows)
+
+## 5. Feature Implementation
+- [ ] Develop mood-based playlist generation algorithm
+- [ ] Implement activity-specific music recommendations
+- [ ] Create user mood tracking and feedback system
+- [ ] Implement AI-generated mood insights
+- [ ] Create "Song Story" feature using Genius API data
+- [ ] Implement Mood Journal CRUD operations
+  - [ ] Create mood journal entry
+  - [ ] Read mood journal entries
+  - [ ] Update mood journal entry
+  - [ ] Delete mood journal entry
+
+## 6. Testing and Refinement
+- [ ] Write and run tests (aim for 80% coverage)
+- [ ] Perform UI/UX improvements
+- [ ] Optimize performance
+- [ ] Conduct thorough testing across devices
+
+## 7. Deployment
+- [ ] Set up deployment environment
+- [ ] Deploy backend to chosen platform
+- [ ] Deploy frontend to chosen platform
+- [ ] Ensure all integrations work in production
+- [ ] Make sure the application is accessible to others
+
+## 8. Documentation and Presentation
+- [ ] Write API documentation
+- [ ] Prepare 5-minute presentation/demo
+  - [ ] Application name and concept
+  - [ ] Key features and their implementation
+  - [ ] Demo of mood-based playlist generation and song story feature
+  - [ ] (Optional) Discuss challenges and solutions
+- [ ] Document development process and challenges
+- [ ] Prepare laptop for live demo during presentation
+
+## 9. Project Management
+- [ ] Make at least 4 descriptive git commits per day
+- [ ] Create new branches for development, work in these branches
+- [ ] Ensure main branch only receives code via pull requests
+- [ ] Report progress to buddy (minimum 3 times)
+- [ ] Complete project by the deadline (4 days from start)

@@ -1,0 +1,63 @@
+body {
+    padding-top: 60px;
+    background-color: #121212;
+    color: #ffffff;
+  }
+  
+  .card {
+    background-color: #181818;
+    border-color: #282828;
+    margin-bottom: 20px;
+  }
+  
+  .card-title, .card-text {
+    color: #ffffff;
+  }
+  
+  .btn-primary {
+    background-color: #1DB954;
+    border-color: #1DB954;
+  }
+  
+  .btn-primary:hover {
+    background-color: #1ed760;
+    border-color: #1ed760;
+  }
+  
+  .btn-secondary {
+    background-color: #535353;
+    border-color: #535353;
+  }
+  
+  .btn-secondary:hover {
+    background-color: #6b6b6b;
+    border-color: #6b6b6b;
+  }
+  
+  .music-player-card {
+    max-width: 500px;
+    margin: 0 auto;
+  }
+  
+  .mood-analysis, .recommended-songs, .playlist-songs {
+    height: calc(100vh - 200px);
+    overflow-y: auto;
+  }
+  
+  .list-group-item {
+    background-color: #282828;
+    border-color: #181818;
+    color: #ffffff;
+  }
+  
+  .navbar-brand, .nav-link {
+    color: #ffffff !important;
+  }
+  
+  .music-player h3, .music-player p {
+    color: #ffffff;
+  }
+  
+  .text-light {
+    color: #ffffff !important;
+  }
