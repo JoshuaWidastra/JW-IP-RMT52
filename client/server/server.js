@@ -4,9 +4,9 @@ const axios = require('axios');
 const cheerio = require('cheerio');
 
 const app = express();
-const port = 3001;
 
 app.use(cors());
+app.use(express.json());
 
 const GENIUS_API_URL = 'https://api.genius.com';
 const GENIUS_ACCESS_TOKEN = process.env.VITE_GENIUS_ACCESS_TOKEN;
@@ -36,6 +36,13 @@ app.get('/api/genius/lyrics', async (req, res) => {
   }
 });
 
-app.listen(port, () => {
-  console.log(`Proxy server listening at http://localhost:${port}`);
-});
+
+// for testing
+if (require.main === module) {
+  const port = 3001;
+  app.listen(port, () => {
+    console.log(`Server listening at http://localhost:${port}`);
+  });
+}
+
+module.exports = app;
