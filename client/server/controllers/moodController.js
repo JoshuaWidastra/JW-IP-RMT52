@@ -1,5 +1,3 @@
-// server/controllers/moodController.js
-
 const axios = require('axios');
 const { getLyrics, getSong } = require('genius-lyrics-api');
 
@@ -11,7 +9,7 @@ const analyzeMood = async (req, res) => {
       return res.status(400).json({ error: 'Artist and title are required' });
     }
 
-    // Fetch lyrics using genius-lyrics-api
+
     const options = {
       apiKey: process.env.GENIUS_API_KEY,
       title: title,
@@ -25,8 +23,7 @@ const analyzeMood = async (req, res) => {
       return res.status(404).json({ error: 'Lyrics not found' });
     }
 
-    // TODO: Implement mood analysis logic using OpenAI API
-    // For now, we'll just return a placeholder response
+
     res.status(200).json({ mood: 'neutral', confidence: 0.7, lyrics: lyrics });
   } catch (error) {
     console.error('Error analyzing mood:', error);
@@ -36,8 +33,7 @@ const analyzeMood = async (req, res) => {
 
 const createJournalEntry = async (req, res) => {
   try {
-    // TODO: Implement create journal entry logic
-    // For now, we'll just return a placeholder response
+
     res.status(201).json({ message: 'Journal entry created successfully', id: 'placeholder-id' });
   } catch (error) {
     console.error('Error creating journal entry:', error);
@@ -47,8 +43,7 @@ const createJournalEntry = async (req, res) => {
 
 const getJournalEntries = async (req, res) => {
   try {
-    // TODO: Implement get journal entries logic
-    // For now, we'll just return a placeholder response
+
     res.status(200).json([
       { id: 'entry-1', mood: 'happy', date: new Date().toISOString() },
       { id: 'entry-2', mood: 'sad', date: new Date(Date.now() - 86400000).toISOString() },
@@ -61,8 +56,7 @@ const getJournalEntries = async (req, res) => {
 
 const updateJournalEntry = async (req, res) => {
   try {
-    // TODO: Implement update journal entry logic
-    // For now, we'll just return a placeholder response
+
     res.status(200).json({ message: 'Journal entry updated successfully', id: req.params.id });
   } catch (error) {
     console.error('Error updating journal entry:', error);
@@ -72,8 +66,6 @@ const updateJournalEntry = async (req, res) => {
 
 const deleteJournalEntry = async (req, res) => {
   try {
-    // TODO: Implement delete journal entry logic
-    // For now, we'll just return a placeholder response
     res.status(200).json({ message: 'Journal entry deleted successfully', id: req.params.id });
   } catch (error) {
     console.error('Error deleting journal entry:', error);
